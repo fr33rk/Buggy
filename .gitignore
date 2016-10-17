@@ -10,15 +10,15 @@
 *.map
 
 html/
-nbproject/private/
-nbproject/Package-*.bash
-nbproject/Makefile-*
+**/nbproject/private/
+**/nbproject/Package-*.bash
+**/nbproject/Makefile-*
 
-build/
-nbbuild/
-dist/
-nbdist/
+**/build/
+**/nbbuild/
+**/dist/
+**/nbdist/
 nbactions.xml
 nb-configuration.xml
 funclist
-disassembly/
+**/disassembly/
