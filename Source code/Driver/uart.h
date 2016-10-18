@@ -12,7 +12,9 @@
 
 bool InitializeUart(const uint32_t baudrate);
 
-void UartSendString(char* text);
+void UartSendString(const char* text);
+
+void TrySendAndReceive();
 
 #endif	/* UART_H */
 

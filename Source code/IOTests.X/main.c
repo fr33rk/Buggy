@@ -7,46 +7,64 @@
 
 
 #include <xc.h>
+#include <string.h>
 #include "BuggyConfig.h"
 #include "LEDs.h"
 #include "Types.h"
-#include "uart.h"
+#include "Uart.h"
+#include "Timing.h"
+#include "MessageFIFOBuffer.h"
 
 enum MainState
 {
     Initializing,
-    Operational,
+    SendMessage,
+    WaitUntilMessageIsSend,
     Error
 } mMainState;
 
-void main(void) 
+bool initialize()
+{
+    InitializeLeds();
+    if (!InitializeUart(57600))
+    {
+        return false;
+    } 
+    else
+    {
+        SetLED(0, true);
+    }
+
+    return true;
+}
+
+void main(void)
 {
     while (true)
     {
         switch (mMainState)
         {
             case Initializing:
-                InitializeLeds();
-                if (!InitializeUart(57600))
+                if (initialize())
                 {
-                    mMainState = Error;
+                    mMainState = SendMessage;
                 }
                 else
                 {
-                    SetLED(0, true);
-                    mMainState = Operational;
+                    mMainState = Error;
                 }
                 break;
-                
-            case Operational:
+
+            case SendMessage:
                 SetLED(1, true);
-                UartSendString("Who is the man?");
+
+                //DelayMs(1000);
                 break;
-                
+
             case Error:
                 SetLED(7, true);
-            
+
         }
     }
-    
+
 }
