@@ -10,10 +10,11 @@
 
 #include "Types.h"
 
-#define MAX_FIFO_ELEMENTS 10
+#define MAX_FIFO_ELEMENTS 5
 #define MAX_MESSAGE_SIZE 20
 
-typedef struct MessageFIFOElement { char data[MAX_MESSAGE_SIZE +1]; } MessageFIFOElement;
+// Add 3 extra spaces for <CR><LF>\0
+typedef struct MessageFIFOElement { char data[MAX_MESSAGE_SIZE + 3]; } MessageFIFOElement;
 
 // Struct definition of a FIFO buffer that contains CAN messages.
 typedef struct
@@ -35,6 +36,7 @@ typedef struct
     MessageFIFOElement*(*AddRaw)(volatile void *, const void *message, const int size);
     void (*Add)(volatile void *, const MessageFIFOElement *message);
     MessageFIFOElement (*GetNext) (volatile void *);
+    MessageFIFOElement* (*Peek) (volatile void *);
     bool (*HasDataAvailable)(volatile void *);
     bool (*HasSpaceAvailable)(volatile void *);        
 } MessageFIFOBuffer;

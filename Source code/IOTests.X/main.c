@@ -57,10 +57,14 @@ void main(void)
 
             case SendMessage:
                 SetLED(1, true);
-
-                //DelayMs(1000);
+                UartSendString("Hello world");
+                mMainState = WaitUntilMessageIsSend;
                 break;
-
+            
+            case WaitUntilMessageIsSend:
+                TrySendAndReceive();
+                break;
+                
             case Error:
                 SetLED(7, true);
 

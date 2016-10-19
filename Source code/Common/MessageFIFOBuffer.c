@@ -67,6 +67,17 @@ MessageFIFOElement getNextFromFifo(volatile void *fifoBuffer)
 }
 
 /**
+ * Get the current element from the FIFO buffer without freeing its space.
+ * @param fifoBuffer, the buffer where the element needs to be peeked of.
+ * @return pointer to the element in the buffer which is the current tail.
+ */
+MessageFIFOElement* peek(volatile void *fifoBuffer)
+{
+    MessageFIFOBuffer* fifoBufferCasted = (MessageFIFOBuffer*) fifoBuffer;
+    return &fifoBufferCasted->data[fifoBufferCasted->tail];
+}
+
+/**
  * Checks if there is data in the FIFO buffer.
  * @param fifoBuffer, the buffer that needs to be tested.
  * @return true, when there is at least one element in the list.
@@ -102,6 +113,7 @@ void InitFifo(volatile MessageFIFOBuffer *fifoBuffer)
     fifoBuffer->Add = addMessageToFifo;
     fifoBuffer->AddRaw = addRawToFifo;
     fifoBuffer->GetNext = getNextFromFifo;
+    fifoBuffer->Peek = peek;
     fifoBuffer->HasDataAvailable = fifoHasDataAvailable;
     fifoBuffer->HasSpaceAvailable = fifoHasSpaceAvailable;
 }
