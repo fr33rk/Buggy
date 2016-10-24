@@ -3,13 +3,12 @@
 
 #include "Uart.h"
 #include "BuggyConfig.h"
-#include "MessageFIFOBuffer.h"
 
 void TrySend();
 void TryReceive();
 
 MessageFIFOBuffer mUartOutMessageBuffer;
-MessageFIFOBuffer mUartInMessageBuffer;
+MessageFIFOBuffer UartInMessageBuffer;
 
 MessageFIFOElement *mElementBeingSend;
 uint8_t mElementBeingSendIndex;
@@ -41,8 +40,9 @@ bool InitializeUart(const uint32_t baudrate)
         TRISC6 = 1; //As Prescribed in Datasheet
         CREN = 1; //Enables Continuous Reception
         TXEN = 1; //Enables Transmission
-        
+
         InitFifo(&mUartOutMessageBuffer);
+        InitFifo(&UartInMessageBuffer);
         mElementBeingSend = NULL;
         mElementBeingSendIndex = 0;
         mElementBeingReceivedIndex = 0;
@@ -56,8 +56,7 @@ bool InitializeUart(const uint32_t baudrate)
 void UartSendString(const char* text)
 {
     MessageFIFOElement message;
-    
-    
+
     uint16_t stringSize = strlen(text);
     if (stringSize > MAX_MESSAGE_SIZE)
     {
@@ -65,8 +64,8 @@ void UartSendString(const char* text)
     }
     
     memcpy(message.data, text, stringSize);
-    // Add end of line characters assign string t
-    strncpy(&message.data[stringSize], "\r\n\0", 2);     
+    // Add end of line characters
+    strncpy(&message.data[stringSize], "\r\n", 2);     
     mUartOutMessageBuffer.Add(&mUartOutMessageBuffer, &message);
 }
 
@@ -76,9 +75,11 @@ void TrySendAndReceive()
     TryReceive();
 }
 
+#include "LEDs.h"
+
 void TryReceive()
 {
-   if (RCIF) 
+   if (RCIF)    
    {
        char newCharacter = RCREG;
        bool restart = false;
@@ -88,24 +89,23 @@ void TryReceive()
        // Now find out if this is the end of the command.
        if (newCharacter == '\n')
        {
-           if ((mElementBeingReceivedIndex > 0) && (mElementBeingReceived.data[mElementBeingReceivedIndex] == '\r'))
+           if ((mElementBeingReceivedIndex > 0) && (mElementBeingReceived.data[mElementBeingReceivedIndex-1] == '\r'))
            {
                // Yes, end of the command.
-               mUartInMessageBuffer.Add(&mUartInMessageBuffer, &mElementBeingReceived);
-               
+               UartInMessageBuffer.Add(&UartInMessageBuffer, &mElementBeingReceived);               
                restart = true;
            }
        }
        else
        {
-            mElementBeingSendIndex++;
-            restart = mElementBeingSendIndex > MAX_MESSAGE_SIZE;
+           mElementBeingReceivedIndex++;
+           restart = mElementBeingSendIndex > MAX_MESSAGE_SIZE;
        }
        
        if (restart)
        {
-           mElementBeingSendIndex = 0;
-           memset((void*)&mElementBeingReceived.data, '\0', sizeof(mElementBeingReceived.data));          
+           mElementBeingReceivedIndex = 0;
+           memset((void*)&mElementBeingReceived.data[0], '\0', sizeof(mElementBeingReceived.data));          
        }
    }
 }
@@ -126,19 +126,22 @@ void TrySend()
         {
             char nextCharacter = mElementBeingSend->data[mElementBeingSendIndex];
         
-            if (nextCharacter == '\0')
+            TXREG = nextCharacter;
+            mElementBeingSendIndex++;
+                        
+            if (nextCharacter == '\n')
             {
                 // Done;
                 mElementBeingSend = NULL;
+                mElementBeingSendIndex = 0;
                 // Free used buffer.
                 mUartOutMessageBuffer.GetNext(&mUartOutMessageBuffer);
             }
-            else
-            {
-                TXREG = nextCharacter;
-            }
-            
-            mElementBeingSendIndex++;
         }
     }    
+}
+
+bool IsUartSendQueueEmpty()
+{
+    return !mUartOutMessageBuffer.HasDataAvailable(&mUartOutMessageBuffer);
 }

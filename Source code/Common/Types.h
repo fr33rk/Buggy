@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <__null.h>
 
 #endif	/* TYPES_H */
 

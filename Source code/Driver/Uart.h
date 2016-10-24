@@ -9,10 +9,15 @@
 #define	UART_H
 
 #include "Types.h"
+#include "MessageFIFOBuffer.h"
+
+extern MessageFIFOBuffer UartInMessageBuffer;
 
 bool InitializeUart(const uint32_t baudrate);
 
 void UartSendString(const char* text);
+
+bool IsUartSendQueueEmpty();
 
 void TrySendAndReceive();
 

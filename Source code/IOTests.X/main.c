@@ -5,7 +5,6 @@
  * Created on 17 oktober 2016, 21:27
  */
 
-
 #include <xc.h>
 #include <string.h>
 #include "BuggyConfig.h"
@@ -18,8 +17,8 @@
 enum MainState
 {
     Initializing,
-    SendMessage,
-    WaitUntilMessageIsSend,
+    WaitOnCommand,
+    EchoCommand,
     Error
 } mMainState;
 
@@ -40,6 +39,8 @@ bool initialize()
 
 void main(void)
 {
+    MessageFIFOElement element;
+    
     while (true)
     {
         switch (mMainState)
@@ -47,22 +48,34 @@ void main(void)
             case Initializing:
                 if (initialize())
                 {
-                    mMainState = SendMessage;
+                    mMainState = WaitOnCommand;
+                    UartSendString("IOTest v0.0.1");
                 }
                 else
                 {
                     mMainState = Error;
-                }
+                }                                
                 break;
 
-            case SendMessage:
+            case WaitOnCommand:
                 SetLED(1, true);
-                UartSendString("Hello world");
-                mMainState = WaitUntilMessageIsSend;
+                
+                TrySendAndReceive();
+                
+                if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
+                {
+                    mMainState = EchoCommand;
+                }
+                
                 break;
             
-            case WaitUntilMessageIsSend:
-                TrySendAndReceive();
+            case EchoCommand:
+                SetLED(1, false);
+                
+                element = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
+                UartSendString(element.data);
+                
+                mMainState = WaitOnCommand;
                 break;
                 
             case Error:
