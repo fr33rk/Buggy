@@ -22,3 +22,5 @@ nbactions.xml
 nb-configuration.xml
 funclist
 **/disassembly/
+debug
+dist
