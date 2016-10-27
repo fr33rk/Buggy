@@ -7,16 +7,23 @@
 
 #ifndef LEDS_H
 #define	LEDS_H
-
 #include "Types.h"
+
+typedef enum
+{
+    ContinuesOff,    
+    ContinuesOn,    
+    BlinkSlow,
+    BlinkFast
+} enmLedState;
 
 void InitializeLeds();
 
-bool IsLEDSet(uint8_t index);
+void SetLedState(uint8_t index, enmLedState state);
 
-void SetLED(uint8_t index, bool state);
+void UpdateLedState();
 
-void SetByteValueInLED(uint8_t value);
+void SetByteValueInLed(uint8_t value);
 
 #endif	/* LEDS_H */
 
