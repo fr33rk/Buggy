@@ -25,5 +25,9 @@ void UpdateLedState();
 
 void SetByteValueInLed(uint8_t value);
 
+void SetLed(uint8_t index);
+
+void ClearLed(uint8_t index);
+
 #endif	/* LEDS_H */
 

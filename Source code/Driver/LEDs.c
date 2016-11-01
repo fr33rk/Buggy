@@ -1,13 +1,11 @@
 #include "LEDs.h"
 #include <pic18f4455.h>
 
-void SetLed(uint8_t index);
-void ClearLed(uint8_t index);
-void BlinkLed(uint8_t index, uint8_t ledOffCount);
+void BlinkLed(uint8_t index, uint16_t ledOffCount);
 
-volatile enmLedState mCurrentLedStates[8];
-uint16_t mLedOffCounter[8];
-uint16_t mLedOnCounter[8];
+static volatile enmLedState mCurrentLedStates[8];
+static uint16_t mLedOffCounter[8];
+static uint16_t mLedOnCounter[8];
 
 #define LED_ON_COUNT 250
 #define LED_OFF_FAST_COUNT 500
@@ -56,6 +54,9 @@ void SetLedState(uint8_t index, enmLedState ledState)
     mCurrentLedStates[index] = ledState;
 }
 
+/**
+ * Process the LED states that have been set via SetLedState.
+ */
 void UpdateLedState()
 {
     for (uint8_t index = 0; index < 8; index++)
@@ -80,22 +81,35 @@ void UpdateLedState()
     }
 }
 
+/**
+ * Display a uint8_t value as binary value using the LEDs.
+ * Cannot be used n comabination with SetLedState/UpdateLedState construction.
+ * @param value, int value that needs to be displayed.
+ */
 void SetByteValueInLed(uint8_t value)
 {
     LATD = value;
 }
 
+/**
+ * Turn led at index ON.
+ * @param index
+ */
 void SetLed(uint8_t index)
 {
     LATD |= (1 << index);
 }
 
+/**
+ * Turn led at index OFF.
+ * @param index
+ */
 void ClearLed(uint8_t index)
 {
     LATD &= ~(1 << index);
 }
 
-void BlinkLed(uint8_t index, uint8_t ledOffCount)
+void BlinkLed(uint8_t index, uint16_t ledOffCount)
 {
 	if(mLedOnCounter[index] != 0)
 	{

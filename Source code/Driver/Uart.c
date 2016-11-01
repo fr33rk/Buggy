@@ -7,13 +7,13 @@
 void TrySend();
 void TryReceive();
 
-MessageFIFOBuffer mUartOutMessageBuffer;
+static MessageFIFOBuffer mUartOutMessageBuffer;
 MessageFIFOBuffer UartInMessageBuffer;
 
-MessageFIFOElement *mElementBeingSend;
-uint8_t mElementBeingSendIndex;
-MessageFIFOElement mElementBeingReceived;
-uint8_t mElementBeingReceivedIndex;
+static MessageFIFOElement *mElementBeingSend;
+static uint8_t mElementBeingSendIndex;
+static MessageFIFOElement mElementBeingReceived;
+static uint8_t mElementBeingReceivedIndex;
 
 /**
  * Initializes the UART module. Messages send and received are buffered in a 5 
@@ -33,13 +33,13 @@ bool InitializeUart(const uint32_t baudrate)
     }
     if (x < 256)
     {
-        SPBRG = x; //Writing SPBRG Register
-        SYNC = 0; //Setting Asynchronous Mode, ie UART
-        SPEN = 1; //Enables Serial Port
-        TRISC7 = 1; //As Prescribed in Datasheet
-        TRISC6 = 1; //As Prescribed in Datasheet
-        CREN = 1; //Enables Continuous Reception
-        TXEN = 1; //Enables Transmission
+        SPBRG = x;            // Writing SPBRG Register
+        TXSTAbits.SYNC = 0;   // Setting Asynchronous Mode, ie UART
+        RCSTAbits.SPEN = 1;   // Serial port enabled (configures RX/DT and TX/CK pins as serial port pins)
+        TRISCbits.TRISC7 = 1; // Asynchronous serial receive data input (EUSART module).
+        TRISCbits.TRISC6 = 1; // Asynchronous serial transmit data output (EUSART module); takes priority over port data. User must configure as output.
+        RCSTAbits.CREN = 1;   // Enables Continuous Reception
+        TXSTAbits.TXEN = 1;   // Enables Transmission
 
         InitFifo(&mUartOutMessageBuffer);
         InitFifo(&UartInMessageBuffer);
@@ -47,12 +47,17 @@ bool InitializeUart(const uint32_t baudrate)
         mElementBeingSendIndex = 0;
         mElementBeingReceivedIndex = 0;
         memset(&mElementBeingReceived.data[0], '\0', sizeof(mElementBeingReceived.data));
+        
         return true;
     }
     
     return false;
 }
 
+/**
+ * Send text via UART. Stringlength should be max MAX_MESSAGE_SIZE.
+ * @param text, the text to send.
+ */
 void UartSendString(const char* text)
 {
     MessageFIFOElement message;
@@ -69,13 +74,14 @@ void UartSendString(const char* text)
     mUartOutMessageBuffer.Add(&mUartOutMessageBuffer, &message);
 }
 
+/**
+ * Send and receive data via UART.
+ */
 void TrySendAndReceive()
 {
     TrySend();
     TryReceive();
 }
-
-#include "LEDs.h"
 
 void TryReceive()
 {
@@ -139,9 +145,4 @@ void TrySend()
             }
         }
     }    
-}
-
-bool IsUartSendQueueEmpty()
-{
-    return !mUartOutMessageBuffer.HasDataAvailable(&mUartOutMessageBuffer);
 }

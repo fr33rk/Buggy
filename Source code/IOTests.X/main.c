@@ -11,8 +11,10 @@
 #include "LEDs.h"
 #include "Types.h"
 #include "Uart.h"
-#include "Timing.h"
+#include "Timer.h"
 #include "MessageFIFOBuffer.h"
+
+extern OnTimerInterrupt HandleTimerInterrupt_0;
 
 enum MainState
 {
@@ -24,21 +26,32 @@ enum MainState
 bool initialize()
 {
     InitializeLeds();
+    InitMainTimer();
     if (!InitializeUart(57600))
     {
         return false;
     } 
-    else
-    {
-        SetLedState(0, true);
-    }
+   
+    HandleTimerInterrupt_0 = UpdateLedState;
+    
+    // Enable interrupts
+    INTCONbits.PEIE = 1;
+    INTCONbits.GIE = 1;   // Global interrupt enable.
 
     return true;
 }
 
+void interrupt HighPrioInterrupt(void)
+{
+    if (TMR1IE && TMR1IF)
+    {
+        HandleTimerInterrupt();
+    }
+}
+
 void main(void)
 {
-    MessageFIFOElement element;
+    mMainState = Initializing;
     
     while (true)
     {
@@ -47,11 +60,12 @@ void main(void)
             case Initializing:
                 if (initialize())
                 {
-                    UartSendString("IOTest v0.0.1");
+                    UartSendString("IOTest v0.0.2");
                     SetLedState(0, BlinkSlow);
                     SetLedState(1, BlinkFast);
                     
                     mMainState = Operational;
+                    SetLed(3);                    
                 }
                 else
                 {
@@ -60,9 +74,10 @@ void main(void)
                 break;
 
             case Operational:
-                UpdateLedState();
-                DelayMs(1);
-//                TrySendAndReceive();
+                //UpdateLedState();
+                //DelayMs(1);
+                SetLed(4);
+                TrySendAndReceive();
 //                
 //                if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
 //                {
@@ -81,7 +96,7 @@ void main(void)
 //                break;
                 
             case Error:
-                SetLedState(7, true);
+                SetLed(5);
 
         }
     }
