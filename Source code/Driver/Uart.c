@@ -146,3 +146,23 @@ void TrySend()
         }
     }    
 }
+
+/**
+ * Send a text with one argument.
+ * @param text, the text to send
+ * @param param. the param to add.
+ * @returns True, when the text/param combination fitted in one message.
+ */
+bool UartSendStringWithParam(const char* text, const char *param)
+{
+    if (strlen(text) + strlen(param) + 1 < MAX_MESSAGE_SIZE)
+    {
+        char message[MAX_MESSAGE_SIZE];
+        strcpy(message, text);
+        strcat(message, ",");
+        strcat(message, param);
+        UartSendString(message);
+        return true;
+    }
+    return false;
+}

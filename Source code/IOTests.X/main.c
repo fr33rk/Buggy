@@ -7,6 +7,7 @@
 
 #include <xc.h>
 #include <string.h>
+#include <stdlib.h>
 #include "BuggyConfig.h"
 #include "LEDs.h"
 #include "Types.h"
@@ -33,6 +34,9 @@ bool initialize()
     } 
    
     HandleTimerInterrupt_0 = UpdateLedState;
+
+    // Disable USB
+    PIE2bits.USBIE = 0;
     
     // Enable interrupts
     INTCONbits.PEIE = 1;
@@ -48,6 +52,7 @@ void interrupt HighPrioInterrupt(void)
         HandleTimerInterrupt();
     }
 }
+
 
 void main(void)
 {
@@ -65,7 +70,12 @@ void main(void)
                     SetLedState(1, BlinkFast);
                     
                     mMainState = Operational;
-                    SetLed(3);                    
+                    SetLed(3);  
+                    
+                    char tmpBuffer[4];
+                    UartSendStringWithParam("Test", itoa(tmpBuffer, 0x21, 16));                    
+                    UartSendStringWithParam("PIE1", itoa(tmpBuffer, PIE1, 16));
+                    UartSendStringWithParam("PIE2", itoa(tmpBuffer, PIE2, 16));
                 }
                 else
                 {
