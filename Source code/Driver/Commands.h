@@ -16,12 +16,15 @@ typedef enum _CommandType
     cmdReset
 } CommandType;
 
+//typedef struct 
+
 typedef struct _Command
 {
     CommandType Type;
     int16_t Params[8];
     bool Request;
 } Command;
+
 
 
 #endif	/* COMMANDS_H */

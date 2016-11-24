@@ -1,0 +1,34 @@
+>AT
+<OK
+
+>AT+CIFSR
+<+CIFSR:APIP,"192.168.4.1"
+<+CIFSR:APMAC,"5e:cf:7f:94:5e:c9"
+<+CIFSR:STAIP,"192.168.5.19"
+<+CIFSR:STAMAC,"5c:cf:7f:94:5e:c9"
+
+>AT+CIPMUX=1
+<OK
+
+>AT+CIPSERVER=1,6060
+<OK
+
+Connect
+<0,CONNECT
+
+Disconnect
+<0,CLOSED
+
+
+
+
+Receive:
+>+IPD,0,20:123456789123456789
+
+Send
+>AT+CIPSEND=0,10
+<OK
+>1234567890 
+<busy s...
+<Recv 10 bytes
+<SEND OK

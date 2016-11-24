@@ -13,6 +13,8 @@
 
 bool InitializeUart(const uint32_t baudrate);
 
+void EnableUart();
+
 void UartSendString(const char* text);
 
 bool UartSendStringWithParam(const char* text, const char *param);

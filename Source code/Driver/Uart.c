@@ -10,7 +10,7 @@ void TryReceive();
 static MessageFIFOBuffer mUartOutMessageBuffer;
 MessageFIFOBuffer UartInMessageBuffer;
 
-static MessageFIFOElement *mElementBeingSend;
+static MessageFIFOElement *mpElementBeingSend;
 static uint8_t mElementBeingSendIndex;
 static MessageFIFOElement mElementBeingReceived;
 static uint8_t mElementBeingReceivedIndex;
@@ -38,12 +38,11 @@ bool InitializeUart(const uint32_t baudrate)
         RCSTAbits.SPEN = 1;   // Serial port enabled (configures RX/DT and TX/CK pins as serial port pins)
         TRISCbits.TRISC7 = 1; // Asynchronous serial receive data input (EUSART module).
         TRISCbits.TRISC6 = 1; // Asynchronous serial transmit data output (EUSART module); takes priority over port data. User must configure as output.
-        RCSTAbits.CREN = 1;   // Enables Continuous Reception
-        TXSTAbits.TXEN = 1;   // Enables Transmission
+
 
         InitFifo(&mUartOutMessageBuffer);
         InitFifo(&UartInMessageBuffer);
-        mElementBeingSend = NULL;
+        mpElementBeingSend = NULL;
         mElementBeingSendIndex = 0;
         mElementBeingReceivedIndex = 0;
         memset(&mElementBeingReceived.data[0], '\0', sizeof(mElementBeingReceived.data));
@@ -52,6 +51,15 @@ bool InitializeUart(const uint32_t baudrate)
     }
     
     return false;
+}
+
+/**
+ * Enable URAT reception and transmition.
+ */
+void EnableUart()
+{
+    RCSTAbits.CREN = 1;   // Enables Continuous Reception
+    TXSTAbits.TXEN = 1;   // Enables Transmission    
 }
 
 /**
@@ -89,7 +97,7 @@ void TryReceive()
    {
        char newCharacter = RCREG;
        bool restart = false;
-
+     
        mElementBeingReceived.data[mElementBeingReceivedIndex] = newCharacter;
       
        // Now find out if this is the end of the command.
@@ -99,7 +107,7 @@ void TryReceive()
            {
                // Yes, end of the command.
                UartInMessageBuffer.Add(&UartInMessageBuffer, &mElementBeingReceived);               
-               restart = true;
+               restart = true;                             
            }
        }
        else
@@ -120,17 +128,17 @@ void TrySend()
 {
     if (TRMT)
     {
-        if (mElementBeingSend == NULL)
+        if (mpElementBeingSend == NULL)
         {
             if (mUartOutMessageBuffer.HasDataAvailable(&mUartOutMessageBuffer))
             {
-                mElementBeingSend = mUartOutMessageBuffer.Peek(&mUartOutMessageBuffer);
+                mpElementBeingSend = mUartOutMessageBuffer.Peek(&mUartOutMessageBuffer);                
             }
         }
 
-        if (mElementBeingSend != NULL)
+        if (mpElementBeingSend != NULL)
         {
-            char nextCharacter = mElementBeingSend->data[mElementBeingSendIndex];
+            char nextCharacter = mpElementBeingSend->data[mElementBeingSendIndex];
         
             TXREG = nextCharacter;
             mElementBeingSendIndex++;
@@ -138,7 +146,7 @@ void TrySend()
             if (nextCharacter == '\n')
             {
                 // Done;
-                mElementBeingSend = NULL;
+                mpElementBeingSend = NULL;
                 mElementBeingSendIndex = 0;
                 // Free used buffer.
                 mUartOutMessageBuffer.GetNext(&mUartOutMessageBuffer);

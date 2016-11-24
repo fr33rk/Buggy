@@ -11,7 +11,7 @@
 #include "Types.h"
 
 #define MAX_FIFO_ELEMENTS 5
-#define MAX_MESSAGE_SIZE 20
+#define MAX_MESSAGE_SIZE 35
 
 // Add 3 extra spaces for <CR><LF>
 typedef struct MessageFIFOElement { char data[MAX_MESSAGE_SIZE + 2]; } MessageFIFOElement;
