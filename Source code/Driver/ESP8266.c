@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "Uart.h"
 #include "LEDs.h"
+#include "Counters.h"
 
 // Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
@@ -39,6 +40,10 @@ void SaveIpAddress(char * ipAddress);
 */
 bool InitializeEspStateMachine()
 {
+#ifdef SIMULATED
+    MessageFIFOElement element;
+#endif    
+    
     TrySendAndReceive();
     
     if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
@@ -54,10 +59,15 @@ bool InitializeEspStateMachine()
         case Start:
             // Start timer.
             mEspInitializationState = WaitOnStartUpDelayDone;
+            SetTimer(0, 2000);
             return true;
         case WaitOnStartUpDelayDone:
-            EnableUart();
-            mEspInitializationState = CheckingIfOperational;
+            if (IsTimerExpired(0))
+            {
+                ResetTimer(0);
+                EnableUart();
+                mEspInitializationState = CheckingIfOperational;
+            }
             return true;
         case CheckingIfOperational:
             UartSendString("AT");
@@ -65,7 +75,6 @@ bool InitializeEspStateMachine()
             SetLedState(2, ContinuesOn);
             
 #ifdef SIMULATED
-            MessageFIFOElement element;
             strcpy(element.data, "OK");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif            
@@ -84,7 +93,6 @@ bool InitializeEspStateMachine()
             mEspInitializationState = WaitOnGettingIp;
             
 #ifdef SIMULATED
-            MessageFIFOElement element;
             strcpy(element.data, "+CIFSR:STAIP,\"192.168.5.19\"");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif                  
@@ -104,9 +112,6 @@ bool InitializeEspStateMachine()
             mEspInitializationState = WaitOnEnablingMultipleConnections;            
             
 #ifdef SIMULATED
-            MessageFIFOElement element;
-            strcpy(element.data, "");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
             strcpy(element.data, "OK");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif      
@@ -125,7 +130,6 @@ bool InitializeEspStateMachine()
             mEspInitializationState = WaitOnEnablingServer; 
             
 #ifdef SIMULATED
-            MessageFIFOElement element;
             strcpy(element.data, "OK");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif              

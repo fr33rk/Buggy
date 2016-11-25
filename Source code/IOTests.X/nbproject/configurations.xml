@@ -10,6 +10,7 @@
         <itemPath>../Common/MessageFIFOBuffer.h</itemPath>
         <itemPath>../Driver/Commands.h</itemPath>
         <itemPath>../Driver/CommandParser.h</itemPath>
+        <itemPath>../Common/Counters.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.h</itemPath>
@@ -33,6 +34,7 @@
         <itemPath>../Common/Timing.c</itemPath>
         <itemPath>../Common/MessageFIFOBuffer.c</itemPath>
         <itemPath>../Driver/CommandParser.c</itemPath>
+        <itemPath>../Common/Counters.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.c</itemPath>
@@ -80,8 +82,6 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
-        <subordinates>
-        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
@@ -512,8 +512,6 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
-        <subordinates>
-        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>

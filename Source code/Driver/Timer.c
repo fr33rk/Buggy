@@ -2,8 +2,8 @@
 #include "BuggyConfig.h"
 
 OnTimerInterrupt HandleTimerInterrupt_0;
-/*
 OnTimerInterrupt HandleTimerInterrupt_1;
+/*
 OnTimerInterrupt HandleTimerInterrupt_2;
 OnTimerInterrupt HandleTimerInterrupt_3;
 OnTimerInterrupt HandleTimerInterrupt_4;
@@ -22,10 +22,9 @@ void HandleTimerInterrupt()
     if (HandleTimerInterrupt_0 != NULL)
         HandleTimerInterrupt_0();
     
-    /*
     if (HandleTimerInterrupt_1 != NULL)
         HandleTimerInterrupt_1();
-    
+    /*
     if (HandleTimerInterrupt_2 != NULL)
         HandleTimerInterrupt_2();
     

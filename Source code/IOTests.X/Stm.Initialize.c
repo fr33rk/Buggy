@@ -4,9 +4,11 @@
 #include "Uart.h"
 #include "Timer.h"
 #include "ESP8266.h"
+#include "Counters.h"
 
 // Add global variables here.
 extern OnTimerInterrupt HandleTimerInterrupt_0;
+extern OnTimerInterrupt HandleTimerInterrupt_1;
  
 // Add local variables here.
 typedef enum INITIALIZE_STATE
@@ -81,6 +83,7 @@ bool StartInitializeStateMachine()
 bool InitializeBuggy()
 {
     InitializeLeds();
+    InitCounters();
     InitMainTimer();
     
     if (!InitializeUart(57600))
@@ -89,8 +92,9 @@ bool InitializeBuggy()
     } 
    
     HandleTimerInterrupt_0 = UpdateLedState;
+    HandleTimerInterrupt_1 = UpdateGeneralCounter;
     
-    // Disable USB interupt.
+    // Disable USB interrupt.
     PIE2bits.USBIE = 0;
     
     // Enable interrupts
