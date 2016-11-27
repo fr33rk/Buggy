@@ -97,6 +97,10 @@ bool InitializeBuggy()
     // Disable USB interrupt.
     PIE2bits.USBIE = 0;
     
+    INTCON3 = 0;
+    INTCON2bits.RBPU = 0;
+    INTCON = 0;
+    
     // Enable interrupts
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;   // Global interrupt enable.

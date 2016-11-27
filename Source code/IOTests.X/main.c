@@ -26,6 +26,19 @@ void interrupt HighPrioInterrupt(void)
     {
         HandleTimerInterrupt();
     }
+    
+    if (RC1IE)
+    {
+        TryReceive();
+    }
+}
+
+void interrupt low_priority LowPrioInterrupt(void)
+{
+    if (RC1IE)
+    {
+        TryReceive();
+    }
 }
 
 void main(void)
@@ -34,6 +47,13 @@ void main(void)
     
     while (true)
     {
+        if (mMainState > Operational)
+        {
+            TrySendAndReceive();
+            
+        }
+        
+        
         switch (mMainState)
         {
             case Start:
@@ -50,6 +70,7 @@ void main(void)
                 break;
 
             case Operational:
+                
                 break;
                 
             case Error:

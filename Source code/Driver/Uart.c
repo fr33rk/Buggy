@@ -3,6 +3,7 @@
 
 #include "Uart.h"
 #include "BuggyConfig.h"
+#include "LEDs.h"
 
 void TrySend();
 void TryReceive();
@@ -39,7 +40,9 @@ bool InitializeUart(const uint32_t baudrate)
         TRISCbits.TRISC7 = 1; // Asynchronous serial receive data input (EUSART module).
         TRISCbits.TRISC6 = 1; // Asynchronous serial transmit data output (EUSART module); takes priority over port data. User must configure as output.
 
-
+        PIE1bits.RCIE = 1;  // Enables the EUSART receive interrupt
+        PIR1bits.RCIF = 0;  // Low priority
+        
         InitFifo(&mUartOutMessageBuffer);
         InitFifo(&UartInMessageBuffer);
         mpElementBeingSend = NULL;
@@ -95,6 +98,8 @@ void TryReceive()
 {
    if (RCIF)    
    {
+       SetLedState(7, ContinuesOn);
+       
        char newCharacter = RCREG;
        bool restart = false;
      
@@ -105,9 +110,20 @@ void TryReceive()
        {
            if ((mElementBeingReceivedIndex > 0) && (mElementBeingReceived.data[mElementBeingReceivedIndex-1] == '\r'))
            {
-               // Yes, end of the command.
-               UartInMessageBuffer.Add(&UartInMessageBuffer, &mElementBeingReceived);               
-               restart = true;                             
+                // Yes, end of the command.
+                // Only add none-empty messages, to prevent buffer overruns.
+                if (strlen(mElementBeingReceived.data) > 2)
+                {
+                    if (UartInMessageBuffer.HasSpaceAvailable(&UartInMessageBuffer))
+                    {
+                        UartInMessageBuffer.Add(&UartInMessageBuffer, &mElementBeingReceived);               
+                    }
+                    else
+                    {                        
+#warning Implement error hendling.
+                    }
+                }
+                restart = true;                             
            }
        }
        else

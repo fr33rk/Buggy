@@ -18,6 +18,7 @@ typedef enum INITIALIZE_ESP_STATE
     WaitOnCheckingIfOperational,
     GettingIp,
     WaitOnGettingIp,
+    WaitOnReceivedAllIpData,
     EnablingMultipleConnections,
     WaitOnEnablingMultipleConnections,
     EnablingServer,
@@ -44,7 +45,7 @@ bool InitializeEspStateMachine()
     MessageFIFOElement element;
 #endif    
     
-    TrySendAndReceive();
+    TrySend();
     
     if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
     {
@@ -59,7 +60,11 @@ bool InitializeEspStateMachine()
         case Start:
             // Start timer.
             mEspInitializationState = WaitOnStartUpDelayDone;
-            SetTimer(0, 2000);
+#ifdef SIMULATED
+            SetTimer(0, 1);
+#else
+            SetTimer(0, 5000);
+#endif            
             return true;
         case WaitOnStartUpDelayDone:
             if (IsTimerExpired(0))
@@ -95,6 +100,8 @@ bool InitializeEspStateMachine()
 #ifdef SIMULATED
             strcpy(element.data, "+CIFSR:STAIP,\"192.168.5.19\"");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
+            strcpy(element.data, "OK");
+            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif                  
             
             return true;
@@ -102,6 +109,13 @@ bool InitializeEspStateMachine()
             if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "+CIFSR:STAIP", 12) == 0))
             {               
                 SaveIpAddress(mpReceivedData->data);
+                mpReceivedData = NULL;
+                mEspInitializationState = WaitOnReceivedAllIpData;                
+            }
+            return true;
+        case WaitOnReceivedAllIpData:
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            {               
                 mpReceivedData = NULL;
                 mEspInitializationState = EnablingMultipleConnections;                
             }
