@@ -39,9 +39,9 @@ bool InitializeUart(const uint32_t baudrate)
         RCSTAbits.SPEN = 1;   // Serial port enabled (configures RX/DT and TX/CK pins as serial port pins)
         TRISCbits.TRISC7 = 1; // Asynchronous serial receive data input (EUSART module).
         TRISCbits.TRISC6 = 1; // Asynchronous serial transmit data output (EUSART module); takes priority over port data. User must configure as output.
-
-        PIE1bits.RCIE = 1;  // Enables the EUSART receive interrupt
-        PIR1bits.RCIF = 0;  // Low priority
+        
+        IPR1bits.RCIP = 0;    // Low priority
+        PIE1bits.RCIE = 1;    // Enables the EUSART receive interrupt
         
         InitFifo(&mUartOutMessageBuffer);
         InitFifo(&UartInMessageBuffer);
@@ -62,7 +62,16 @@ bool InitializeUart(const uint32_t baudrate)
 void EnableUart()
 {
     RCSTAbits.CREN = 1;   // Enables Continuous Reception
-    TXSTAbits.TXEN = 1;   // Enables Transmission    
+    TXSTAbits.TXEN = 1;   // Enables Transmission        
+}
+
+/**
+ * Disable UART reception and transmition;
+ */
+void DisableUart()
+{
+    RCSTAbits.CREN = 0;   // Disables Continuous Reception
+    TXSTAbits.TXEN = 0;   // Disables Transmission         
 }
 
 /**
@@ -98,8 +107,6 @@ void TryReceive()
 {
    if (RCIF)    
    {
-       SetLedState(7, ContinuesOn);
-       
        char newCharacter = RCREG;
        bool restart = false;
      

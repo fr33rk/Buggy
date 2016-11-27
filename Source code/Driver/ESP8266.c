@@ -23,6 +23,7 @@ typedef enum INITIALIZE_ESP_STATE
     WaitOnEnablingMultipleConnections,
     EnablingServer,
     WaitOnEnablingServer,
+    Resetting,
     Finalize
 } enmInitializeEspState;
 
@@ -31,6 +32,7 @@ enmInitializeEspState mEspInitializationState;
 static MessageFIFOElement mReceivedData;
 static MessageFIFOElement *mpReceivedData;
 static uint8_t mIpAddress;
+static bool mTriedReset;
 
 // Add function prototypes here.
 void SaveIpAddress(char * ipAddress);
@@ -144,19 +146,40 @@ bool InitializeEspStateMachine()
             mEspInitializationState = WaitOnEnablingServer; 
             
 #ifdef SIMULATED
-            strcpy(element.data, "OK");
+            strcpy(element.data, "ERROR");
             UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
 #endif              
             
             return true;
         case WaitOnEnablingServer:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if (mpReceivedData != NULL) 
             {               
+                if (strncmp(mpReceivedData->data, "OK", 2) == 0)
+                {
+                    mEspInitializationState = Finalize;                
+                }
+                else if (strncmp(mpReceivedData->data, "ERROR", 5) == 0)
+                {
+                    if (!mTriedReset)
+                    {
+                        mEspInitializationState = Resetting;
+                    }
+                    else
+                    {
+                        mEspInitializationState = Finalize;
+                    }
+                }
                 mpReceivedData = NULL;
-                mEspInitializationState = Finalize;                
             }
             return true;
         
+        case Resetting:
+            mTriedReset = true;
+            UartSendString("AT+RST");
+            DisableUart();
+            mEspInitializationState = Start;
+            return true;
+            
         case Finalize:   
             SetLedState(2, ContinuesOff);
             SetLedState(3, ContinuesOff);
@@ -169,13 +192,26 @@ bool InitializeEspStateMachine()
     }
 }
 
+/**
+ * Initialize the state machine.
+ */
 void InitInitializeEspStateMachine()
 {
     mpReceivedData = NULL;
     mEspInitializationState = Idle;
     mIpAddress = 0;
+    mTriedReset = false;
+
+    SetLedState(2, ContinuesOff);
+    SetLedState(3, ContinuesOff);
+    SetLedState(4, ContinuesOff);
+    SetLedState(5, ContinuesOff); 
 }
-//
+
+/**
+ * Start the state machine.
+ * @return true, when the machine was started.
+ */
 bool StartInitializeEspStateMachine()
 {
     if(mEspInitializationState == Idle)

@@ -11,6 +11,7 @@
 #include "LEDs.h"
 #include "Timer.h"
 #include "Stm.Initialize.h"
+#include "Uart.h"
 
 enum MainState
 {
@@ -25,12 +26,7 @@ void interrupt HighPrioInterrupt(void)
     if (TMR1IE && TMR1IF)
     {
         HandleTimerInterrupt();
-    }
-    
-    if (RC1IE)
-    {
-        TryReceive();
-    }
+    }   
 }
 
 void interrupt low_priority LowPrioInterrupt(void)
@@ -49,10 +45,8 @@ void main(void)
     {
         if (mMainState > Operational)
         {
-            TrySendAndReceive();
-            
+            TrySend();            
         }
-        
         
         switch (mMainState)
         {

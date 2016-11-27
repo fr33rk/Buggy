@@ -82,6 +82,8 @@ bool StartInitializeStateMachine()
 
 bool InitializeBuggy()
 {
+    RCONbits.IPEN = 1;    // Enable priority levels on interrupts
+    
     InitializeLeds();
     InitCounters();
     InitMainTimer();
@@ -90,20 +92,16 @@ bool InitializeBuggy()
     {
         return false;
     } 
-   
+  
     HandleTimerInterrupt_0 = UpdateLedState;
     HandleTimerInterrupt_1 = UpdateGeneralCounter;
     
     // Disable USB interrupt.
     PIE2bits.USBIE = 0;
-    
-    INTCON3 = 0;
-    INTCON2bits.RBPU = 0;
-    INTCON = 0;
-    
-    // Enable interrupts
-    INTCONbits.PEIE = 1;
-    INTCONbits.GIE = 1;   // Global interrupt enable.
 
+    // Enable interrupts
+    INTCONbits.GIEL = 1;  // Enable low priority interrupts
+    INTCONbits.GIEH = 1;  // Enable high priority interrupts
+    
     return true;
 }

@@ -15,11 +15,17 @@ bool InitializeUart(const uint32_t baudrate);
 
 void EnableUart();
 
+void DisableUart();
+
 void UartSendString(const char* text);
 
 bool UartSendStringWithParam(const char* text, const char *param);
 
 void TrySendAndReceive();
+
+void TryReceive();
+
+void TrySend();
 
 #endif	/* UART_H */
 
