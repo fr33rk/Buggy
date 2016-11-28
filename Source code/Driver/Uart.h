@@ -17,8 +17,6 @@ void EnableUart();
 
 void UartSendString(const char* text);
 
-bool UartSendStringWithParam(const char* text, const char *param);
-
 void TrySendAndReceive();
 
 #endif	/* UART_H */

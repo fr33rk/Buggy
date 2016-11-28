@@ -8,9 +8,9 @@
         <itemPath>../Common/Types.h</itemPath>
         <itemPath>../Common/Timing.h</itemPath>
         <itemPath>../Common/MessageFIFOBuffer.h</itemPath>
-        <itemPath>../Driver/Commands.h</itemPath>
-        <itemPath>../Driver/CommandParser.h</itemPath>
         <itemPath>../Common/Counters.h</itemPath>
+        <itemPath>../Common/BuggyCommands.h</itemPath>
+        <itemPath>../Common/BuggyMessage.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.h</itemPath>
@@ -20,7 +20,6 @@
         <itemPath>../Driver/Timer.h</itemPath>
         <itemPath>../Driver/ESP8266.h</itemPath>
       </logicalFolder>
-      <itemPath>../Driver/Stm.CommandHandling.h</itemPath>
       <itemPath>Stm.Initialize.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -33,7 +32,6 @@
       <logicalFolder name="f2" displayName="Common" projectFiles="true">
         <itemPath>../Common/Timing.c</itemPath>
         <itemPath>../Common/MessageFIFOBuffer.c</itemPath>
-        <itemPath>../Driver/CommandParser.c</itemPath>
         <itemPath>../Common/Counters.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
@@ -44,7 +42,6 @@
         <itemPath>../Driver/ESP8266.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>../Driver/Stm.CommandHandling.c</itemPath>
       <itemPath>Stm.Initialize.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
