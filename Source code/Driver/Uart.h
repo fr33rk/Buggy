@@ -19,8 +19,6 @@ void DisableUart();
 
 void UartSendString(const char* text);
 
-bool UartSendStringWithParam(const char* text, const char *param);
-
 void TrySendAndReceive();
 
 void TryReceive();
