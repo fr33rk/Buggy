@@ -41,6 +41,7 @@
         <itemPath>../Driver/Uart.c</itemPath>
         <itemPath>../Driver/Timer.c</itemPath>
         <itemPath>../Driver/ESP8266.c</itemPath>
+        <itemPath>../Driver/AnalogSensors.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>Stm.Initialize.c</itemPath>
