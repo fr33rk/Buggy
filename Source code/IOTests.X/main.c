@@ -8,10 +8,14 @@
 #include <xc.h>
 #include <string.h>
 #include <stdlib.h>
-#include "LEDs.h"
-#include "Timer.h"
-#include "Stm.Initialize.h"
+#include "ESP8266.h"
 #include "Uart.h"
+#include "Timer.h"
+#include "LEDs.h"
+#include "Stm.Initialize.h"
+#include "Stm.Operational.h"
+
+extern MessageFIFOBuffer UartInMessageBuffer;
 
 enum MainState
 {
@@ -20,6 +24,8 @@ enum MainState
     Operational,
     Error
 } mMainState;
+
+void ProcessMessages();
 
 void interrupt HighPrioInterrupt(void)
 {
@@ -31,21 +37,22 @@ void interrupt HighPrioInterrupt(void)
 
 void interrupt low_priority LowPrioInterrupt(void)
 {
-    if (RC1IE)
-    {
-        TryReceive();
-    }
+    HandleUartInterrupts();
 }
 
 void main(void)
 {
     mMainState = Start;
     
+#ifdef SIMULATED
+    MessageFIFOElement element;
+#endif
+    
     while (true)
     {
-        if (mMainState > Operational)
+        if (mMainState >= Operational)
         {
-            TrySend();            
+            ProcessMessages();
         }
         
         switch (mMainState)
@@ -59,16 +66,37 @@ void main(void)
             case Initializing:
                 if (!InitializeStateMachine())
                 {
+                    InitOperationalStateMachine();
+                    StartOperationalStateMachine();
                     mMainState = Operational;
                 }
                 break;
 
             case Operational:
-                
+                if (!OperationalStateMachine())
+                {
+                    mMainState = Error;
+                }
                 break;
                 
             case Error:
                 SetLedState(0, ContinuesOn);
         }
     }
+}
+
+void ProcessMessages()
+{
+    MessageFIFOElement receivedData;
+    
+    if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
+    {
+        receivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
+        
+        if (!ProcessConnectionInfo(receivedData.data))
+        {
+            
+        }
+    }
+    
 }

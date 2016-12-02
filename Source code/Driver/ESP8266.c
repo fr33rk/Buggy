@@ -33,6 +33,7 @@ static MessageFIFOElement mReceivedData;
 static MessageFIFOElement *mpReceivedData;
 static uint8_t mIpAddress;
 static bool mTriedReset;
+static uint8_t mConnections;
 
 // Add function prototypes here.
 void SaveIpAddress(char * ipAddress);
@@ -46,8 +47,6 @@ bool InitializeEspStateMachine()
 #ifdef SIMULATED
     MessageFIFOElement element;
 #endif    
-    
-    TrySend();
     
     if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
     {
@@ -156,7 +155,7 @@ bool InitializeEspStateMachine()
             {               
                 if (strncmp(mpReceivedData->data, "OK", 2) == 0)
                 {
-                    mEspInitializationState = Finalize;                
+                    mEspInitializationState = Finalize;
                 }
                 else if (strncmp(mpReceivedData->data, "ERROR", 5) == 0)
                 {
@@ -252,7 +251,36 @@ void SaveIpAddress(char * ipAddress)
             {
                 rawAddress[rawAddressIndex++] = current;
             }
-        }
-                
+        }                
     }
+}
+
+bool ProcessConnectionInfo(const char *message)
+{
+    bool process = true;
+    bool connected = false;
+    
+    if (strncmp(message + 2, "CONNECT", 7) == 0)
+    {
+        connected = true;
+    }
+    else if (strncmp(message + 2, "DISCONNECT", 10) != 0)
+    {
+        process = false;
+    }
+
+    if (process)
+    {
+        char index[2];
+        strncpy(index, message, 1);
+        
+        if (connected)
+            mConnections |= 1 << atoi(index);
+        else
+            mConnections &= ~(1 << atoi(index));
+        
+        SetLedState(1, mConnections ? ContinuesOn : ContinuesOff);
+    }
+    
+    return process;
 }

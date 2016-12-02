@@ -19,11 +19,7 @@ void DisableUart();
 
 void UartSendString(const char* text);
 
-void TrySendAndReceive();
-
-void TryReceive();
-
-void TrySend();
+void HandleUartInterrupts();
 
 #endif	/* UART_H */
 

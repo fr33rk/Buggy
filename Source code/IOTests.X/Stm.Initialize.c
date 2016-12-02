@@ -44,7 +44,7 @@ bool InitializeStateMachine()
             InitInitializeEspStateMachine();
             StartInitializeEspStateMachine();
             mInitializationState = InitializingEsp;
-            
+
             // Clear the communication buffers.
             UartSendString("Dummy");
             

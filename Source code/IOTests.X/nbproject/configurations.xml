@@ -21,6 +21,7 @@
         <itemPath>../Driver/ESP8266.h</itemPath>
       </logicalFolder>
       <itemPath>Stm.Initialize.h</itemPath>
+      <itemPath>Stm.Operational.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -43,6 +44,7 @@
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>Stm.Initialize.c</itemPath>
+      <itemPath>Stm.Operational.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

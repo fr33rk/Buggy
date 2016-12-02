@@ -8,6 +8,8 @@
 #ifndef STM_INITIALIZE_H
 #define	STM_INITIALIZE_H
 
+#include "Types.h"
+
 bool InitializeStateMachine();
 
 void InitInitializeStateMachine();

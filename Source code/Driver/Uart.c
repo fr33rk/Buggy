@@ -5,8 +5,8 @@
 #include "BuggyConfig.h"
 #include "LEDs.h"
 
-void TrySend();
-void TryReceive();
+void HandleTxInterrupt();
+void HandleRxInterrupt();
 
 static MessageFIFOBuffer mUartOutMessageBuffer;
 MessageFIFOBuffer UartInMessageBuffer;
@@ -40,8 +40,9 @@ bool InitializeUart(const uint32_t baudrate)
         TRISCbits.TRISC7 = 1; // Asynchronous serial receive data input (EUSART module).
         TRISCbits.TRISC6 = 1; // Asynchronous serial transmit data output (EUSART module); takes priority over port data. User must configure as output.
         
-        IPR1bits.RCIP = 0;    // Low priority
+        IPR1bits.RCIP = 0;    // Set the EUSART receive interrupt to low priority.
         PIE1bits.RCIE = 1;    // Enables the EUSART receive interrupt
+        IPR1bits.TXIP = 0;    // Set the EUSART transmit interrupt to low priority.
         
         InitFifo(&mUartOutMessageBuffer);
         InitFifo(&UartInMessageBuffer);
@@ -92,18 +93,20 @@ void UartSendString(const char* text)
     // Add end of line characters
     strncpy(&message.data[stringSize], "\r\n", 2);     
     mUartOutMessageBuffer.Add(&mUartOutMessageBuffer, &message);
+        
+    PIE1bits.TXIE = 1; // Enables the EUSART transmit interrupt
 }
 
 /**
  * Send and receive data via UART.
  */
-void TrySendAndReceive()
+void HandleUartInterrupts()
 {
-    TrySend();
-    TryReceive();
+    if (RC1IE) HandleRxInterrupt();
+    if (TX1IE) HandleTxInterrupt();
 }
 
-void TryReceive()
+void HandleRxInterrupt()
 {
    if (RCIF)    
    {
@@ -127,7 +130,7 @@ void TryReceive()
                     }
                     else
                     {                        
-#warning Implement error hendling.
+#warning Implement error handling.
                     }
                 }
                 restart = true;                             
@@ -147,9 +150,9 @@ void TryReceive()
    }
 }
 
-void TrySend()
+void HandleTxInterrupt()
 {
-    if (TRMT)
+    if (TXIF)
     {
         if (mpElementBeingSend == NULL)
         {
@@ -163,7 +166,7 @@ void TrySend()
         {
             char nextCharacter = mpElementBeingSend->data[mElementBeingSendIndex];
         
-            TXREG = nextCharacter;
+            TXREG = nextCharacter; // Clears the TXIF
             mElementBeingSendIndex++;
                         
             if (nextCharacter == '\n')
@@ -174,6 +177,11 @@ void TrySend()
                 // Free used buffer.
                 mUartOutMessageBuffer.GetNext(&mUartOutMessageBuffer);
             }
+        }
+        else
+        {
+            // Diable interrupt until message is set in the buffer again.
+            PIE1bits.TXIE = 0;
         }
     }    
 }
