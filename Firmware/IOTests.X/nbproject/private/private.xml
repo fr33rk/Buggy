@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Source%20code/IOTests.X/main.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Source%20code/Common/Timing.h</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Source%20code/Common/MessageFIFOBuffer.h</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Source%20code/Driver/Uart.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Source%20code/Driver/Uart.h</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/ESP8266.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/BuggyConfig.h</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/LEDs.c</file>
         </group>
     </open-files>
 </project-private>
