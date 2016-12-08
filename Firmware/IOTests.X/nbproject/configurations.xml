@@ -11,6 +11,7 @@
         <itemPath>../Common/Counters.h</itemPath>
         <itemPath>../Common/BuggyCommands.h</itemPath>
         <itemPath>../Common/BuggyMessage.h</itemPath>
+        <itemPath>../Common/BuggyMemory.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.h</itemPath>
@@ -19,6 +20,7 @@
         <itemPath>../Driver/uart.h</itemPath>
         <itemPath>../Driver/Timer.h</itemPath>
         <itemPath>../Driver/ESP8266.h</itemPath>
+        <itemPath>../Driver/AnalogSensors.h</itemPath>
       </logicalFolder>
       <itemPath>Stm.Initialize.h</itemPath>
       <itemPath>Stm.Operational.h</itemPath>
@@ -82,8 +84,6 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
-        <subordinates>
-        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
@@ -514,8 +514,6 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
-        <subordinates>
-        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>

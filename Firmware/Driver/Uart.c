@@ -4,6 +4,8 @@
 #include "Uart.h"
 #include "BuggyConfig.h"
 #include "LEDs.h"
+#include "BuggyCommands.h"
+#include "BuggyMemory.h"
 
 void HandleTxInterrupt();
 void HandleRxInterrupt();
@@ -129,8 +131,9 @@ void HandleRxInterrupt()
                         UartInMessageBuffer.Add(&UartInMessageBuffer, &mElementBeingReceived);               
                     }
                     else
-                    {                        
-#warning Implement error handling.
+                    {   
+                        BuggyMemory.IsInError = true;
+                        BuggyMemory.ErrorCode = errRxFifoBufferOverflow;
                     }
                 }
                 restart = true;                             

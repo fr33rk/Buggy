@@ -14,5 +14,11 @@ typedef enum COMMANDID
     
 } CommandId;
 
+
+typedef enum ERROR_CODES
+{
+    errRxFifoBufferOverflow,
+} ErrorCode;
+
 #endif	/* BUGGYCOMMANDS_H */
 
