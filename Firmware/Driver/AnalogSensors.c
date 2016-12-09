@@ -38,8 +38,8 @@ void InitAnalogSensors()
     ADCON1bits.PCFG = 0x05; // Enable AN0 to AN9
     
     ADCON2bits.ADFM = 0; // Left justified.
-    ADCON2bits.ACQT = 0; // Acquisition time (0 Tad)
-    ADCON2bits.ADCS = 0; // A/D Conversion Clock Select bits (Fosc/2)
+    ADCON2bits.ACQT = 0x01; // Acquisition time (2 Tad)
+    ADCON2bits.ADCS = 0x06; // A/D Conversion Clock Select bits (Fosc/64)
     
     PIR1bits.ADIF = 0; // Reset interrupt flag.
     PIE1bits.ADIE = 1; // Enables the A/D interrupt
@@ -54,7 +54,6 @@ void StartAcquisition(AnalogSensor sensor)
 {
     ADCON0bits.CHS = AdInputChannel[sensor];
     ADCON0bits.ADON = 1; // Turn on A/D module
-    // Wait acquisition time
     ADCON0bits.GODONE = 1; // Start conversion.
     // When the conversion is done the ADIF will be triggered.
 }
@@ -78,6 +77,13 @@ void HandleAdInterrupts()
     if (PIE1bits.ADIE && PIR1bits.ADIF)
     {
         PIR1bits.ADIF = 0;
-        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;
+        ADCON0bits.ADON = 0; // Turn off A/D module
+        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;            
     }
+}
+
+void UpdateAnalogSensorReadings()
+{    
+    // Check if conversion is finished
+    
 }

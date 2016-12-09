@@ -23,5 +23,7 @@ typedef enum ANALOG_SENSOR
 
 uint16_t ReadSensor(AnalogSensor sensor);
 
+void UpdateAnalogSensorReadings();
+
 #endif	/* ANALOGSENSORS_H */
 
