@@ -7,7 +7,7 @@ typedef enum _OPERATIONAL_STATE
 {
     Idle,
     Start,
-    SendMessage,
+    SendingMessage,
     Finalize,
 } enmOperationalState;
 
@@ -28,13 +28,13 @@ bool OperationalStateMachine(void)
         case Idle:
             return false;
         case Start:
-            SetTimer(0, 1000);
-            mCurrentState = SendMessage;
+            SetTimer(0, 5000);
+            mCurrentState = SendingMessage;
             return true;
-        case SendMessage:
+        case SendingMessage:
             if (IsTimerExpired(0))
             {
-                //Send("Hello world");
+                SendMessage("Hello world");
                 ResetTimer(0);
                 mCurrentState = Start;
             }

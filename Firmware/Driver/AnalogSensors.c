@@ -84,6 +84,5 @@ void HandleAdInterrupts()
 
 void UpdateAnalogSensorReadings()
 {    
-    // Check if conversion is finished
-    
+    // Check if conversion is finished    
 }
