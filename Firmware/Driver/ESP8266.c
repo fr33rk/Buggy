@@ -29,13 +29,36 @@ typedef enum INITIALIZE_ESP_STATE
     Finalize
 } enmInitializeEspState;
 
-enmInitializeEspState mEspInitializationState;
+typedef enum OPERATIONAL_ESP_STATE
+{
+    OperationalIdle,
+    Parallel,
+    MessageReceived,
+    SavingChannel,
+    ClearingChannel,
+    ReceivingData,
+    RequestingSend,
+    WaitOnRequestGranted,
+    SendingMessage,
+    WaitingOnSendDone,
+} enmOperationalEspState;
+
+static enmInitializeEspState mEspInitializationState;
+static enmOperationalEspState mCurrentOperationalMainState;
+static enmOperationalEspState mCurrentOperationalSendState;
 
 static MessageFIFOElement mReceivedData;
 static MessageFIFOElement *mpReceivedData;
 static uint8_t mIpAddress;
 static bool mTriedReset;
+static char mOutMessage[MAX_MESSAGE_SIZE];
+static char *mpOutMessage = NULL;
+static char mRequestToSendMessage[] = "AT+CIPSEND=x,xx";
 static uint8_t mConnections;
+static uint8_t mConnectionIndex;
+
+
+const char *cMsgOk = "OK";
 
 // Add function prototypes here.
 void SaveIpAddress(char * ipAddress);
@@ -51,10 +74,6 @@ void ProcessReceivedMessage(const char *message);
 */
 bool InitializeEspStateMachine()
 {
-#ifdef SIMULATED
-    MessageFIFOElement element;
-#endif    
-    
     if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
     {
         mReceivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
@@ -68,11 +87,7 @@ bool InitializeEspStateMachine()
         case Start:
             // Start timer.
             mEspInitializationState = WaitOnStartUpDelayDone;
-#ifdef SIMULATED
-            SetTimer(0, 1);
-#else
             SetTimer(0, 5000);
-#endif            
             return true;
         case WaitOnStartUpDelayDone:
             if (IsTimerExpired(0))
@@ -86,15 +101,9 @@ bool InitializeEspStateMachine()
             UartSendString("AT");
             mEspInitializationState = WaitOnCheckingIfOperational;
             SetLedState(2, ContinuesOn);
-            
-#ifdef SIMULATED
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif            
-                        
             return true;
         case WaitOnCheckingIfOperational:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = GettingIp;                
@@ -104,14 +113,6 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIFSR");
             SetLedState(3, ContinuesOn);
             mEspInitializationState = WaitOnGettingIp;
-            
-#ifdef SIMULATED
-            strcpy(element.data, "+CIFSR:STAIP,\"192.168.5.19\"");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif                  
-            
             return true;
         case WaitOnGettingIp:
             if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "+CIFSR:STAIP", 12) == 0))
@@ -122,7 +123,7 @@ bool InitializeEspStateMachine()
             }
             return true;
         case WaitOnReceivedAllIpData:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = EnablingMultipleConnections;                
@@ -132,15 +133,9 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIPMUX=1");
             SetLedState(4, ContinuesOn);
             mEspInitializationState = WaitOnEnablingMultipleConnections;            
-            
-#ifdef SIMULATED
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif      
-            
             return true;
         case WaitOnEnablingMultipleConnections:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = EnablingServer;                
@@ -150,17 +145,11 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIPSERVER=1,6090");
             SetLedState(5, ContinuesOn);
             mEspInitializationState = WaitOnEnablingServer; 
-            
-#ifdef SIMULATED
-            strcpy(element.data, "ERROR");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif              
-            
             return true;
         case WaitOnEnablingServer:
             if (mpReceivedData != NULL) 
             {               
-                if (strncmp(mpReceivedData->data, "OK", 2) == 0)
+                if (strncmp(mpReceivedData->data, cMsgOk, 2) == 0)
                 {
                     mEspInitializationState = Finalize;
                 }
@@ -192,17 +181,7 @@ bool InitializeEspStateMachine()
             SetLedState(4, ContinuesOff);
             SetLedState(5, ContinuesOff);            
             mEspInitializationState = Idle;
-            InitOperationalEdpStateMachine();
             StartOperationalEspStateMachine();
-            
-#ifdef SIMULATED
-            strcpy(element.data, "1,CONNECT");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);                  
-            
-            strcpy(element.data, "1,DISCONNECT");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);             
-#endif              
-            
             return false;
         default:
             return false;    
@@ -275,37 +254,15 @@ void SaveIpAddress(char * ipAddress)
 
 
 
-typedef enum OPERATIONAL_ESP_STATE
-{
-    OperationalIdle,
-    Parallel,
-    MessageReceived,
-    SavingChannel,
-    ClearingChannel,
-    ReceivingData,
-    RequestingSend,
-    WaitOnRequestGranted,
-    SendingMessage,
-    WaitingOnSendDone,
-} enmOperationalEspState;
 
-static enmOperationalEspState mCurrentOperationalMainState;
-static enmOperationalEspState mCurrentOperationalSendState;
-static char mOutMessage[MAX_MESSAGE_SIZE];
-static char *mpOutMessage = NULL;
-static char mRequestToSendMessage[] = "AT+CIPSEND=x,xx";
-static uint8_t mConnectionIndex;
-
-void InitOperationalEdpStateMachine()
-{
-    mpOutMessage = NULL;
-}
 
 void StartOperationalEspStateMachine()
 {
+    mpOutMessage = NULL;
     mCurrentOperationalMainState = OperationalIdle;
     mCurrentOperationalSendState = OperationalIdle;
 }
+
 void SendMessage(const char *message)
 {
     strcpy(mOutMessage, message);
@@ -314,11 +271,6 @@ void SendMessage(const char *message)
 
 bool OperationalEspSendStateMachine(const char *message)
 {
- #ifdef SIMULATED
-    MessageFIFOElement element;
-#endif    
-       
-    
     switch(mCurrentOperationalSendState)
     {
         case OperationalIdle:
@@ -333,13 +285,6 @@ bool OperationalEspSendStateMachine(const char *message)
             if (RequestSend())
             {
                 mCurrentOperationalSendState = WaitOnRequestGranted;
-                SetLedState(2, ContinuesOn);
-                SetLedState(6, ContinuesOff);
-#ifdef SIMULATED
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);                  
-#endif                   
-                
             }
             else
             {
@@ -348,26 +293,18 @@ bool OperationalEspSendStateMachine(const char *message)
             }
             return true;
         case WaitOnRequestGranted:
-            if ((message != NULL) && (strncmp(message, "OK", 2) == 0))
+            if ((message != NULL) && (strncmp(message, cMsgOk, 2) == 0))
             {
-                SetLedState(3, ContinuesOn);                
                 mCurrentOperationalSendState = SendingMessage;                
             }
             return true;
         case SendingMessage:
             UartSendString(mpOutMessage);
             mCurrentOperationalSendState = WaitingOnSendDone;
-            SetLedState(4, ContinuesOn);
-#ifdef SIMULATED
-            strcpy(element.data, "SEND OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);                  
-#endif              
-            
             return true;
         case WaitingOnSendDone:
             if ((message != NULL) && (strncmp(message, "SEND OK", 7) == 0))
             {
-                SetLedState(5, ContinuesOn);
                 mCurrentOperationalSendState = RequestingSend;                
             }
             return true;
@@ -382,11 +319,6 @@ bool OperationalEspStateMachine()
     {
         mReceivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
         mpReceivedData = &mReceivedData;
-        
-        if ((strncmp(mpReceivedData->data, "ERROR", 5) == 0))
-        {
-            SetLedState(6, ContinuesOn);
-        }
     }
 
     switch(mCurrentOperationalMainState)
@@ -447,14 +379,23 @@ bool RequestSend()
 {
     for (mConnectionIndex;  mConnectionIndex < MAX_CONNECTIONS; mConnectionIndex++)
     {
+        // Check if connected.
         if ((mConnections & (1 << mConnectionIndex)) > 0)
         {
             char conversion[2];
+            // Set 'Channel'
             itoa(conversion, mConnectionIndex, 10);
             mRequestToSendMessage[11] = conversion[0]; 
+            
+            // Set message size.
             itoa(conversion, strlen(mpOutMessage), 10);
             strncpy(mRequestToSendMessage + 13, conversion, 2);
+            
+            // Send request.
             UartSendString(mRequestToSendMessage);
+            
+            // For the next loop because the method ends before the 'for' loop
+            // can do it.
             mConnectionIndex++;
             return true;
         }
