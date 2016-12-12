@@ -6,7 +6,22 @@ uint16_t ConversionResults[5];
 
 void StartAcquisition(AnalogSensor sensor);
 uint8_t GetResultIndex(uint8_t An);
+void InitUpdateAnalogSensors();
+void UpdateAnalogSensorReadings();
+AnalogSensor mCurrentSensor;
 
+typedef enum UPDATE_SENSOR_STATE
+{
+    Idle,
+    StartNextConversion,
+    WaitOnResult,
+} enmUpdateSensorState;
+
+static enmUpdateSensorState mUpdateSensorState;
+
+/**
+ * Initializes the PIC to be able to read all of the buggy's analog sensors.
+ */
 void InitAnalogSensors()
 {
     // --- Distance sensors ---
@@ -41,13 +56,44 @@ void InitAnalogSensors()
     ADCON2bits.ACQT = 0x01; // Acquisition time (2 Tad)
     ADCON2bits.ADCS = 0x06; // A/D Conversion Clock Select bits (Fosc/64)
     
+    IPR1bits.ADIP = 0; // A/D Converter Interrupt to low priority.
     PIR1bits.ADIF = 0; // Reset interrupt flag.
     PIE1bits.ADIE = 1; // Enables the A/D interrupt
+    
+    InitUpdateAnalogSensors();
 }
 
+/**
+ * Interrupt handler for the A/D convertor.
+ */
+void HandleAdInterrupts()
+{
+    if (PIE1bits.ADIE && PIR1bits.ADIF)
+    {
+        PIR1bits.ADIF = 0;
+        ADCON0bits.ADON = 0; // Turn off A/D module
+        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;     
+        
+        if (mUpdateSensorState == StartNextConversion)
+        {
+            UpdateAnalogSensorReadings();
+        }
+    }
+}
+
+/**
+ * Execute a 'stand alone' AD reading. Make sure that the
+ * automatic (timed) AD conversions has been switched off (StartUpdateAnalogSensors)
+ * @param sensor, The sensor that needs to be read.
+ * @return The read value.
+ */
 uint16_t ReadSensor(AnalogSensor sensor)
 {
-    return 0; 
+    StartAcquisition(sensor);
+        
+    while(!ADCON0bits.GODONE);
+    
+    return ADRES;
 }
     
 void StartAcquisition(AnalogSensor sensor)
@@ -72,18 +118,46 @@ uint8_t GetResultIndex(uint8_t An)
     return result;
 }
 
-void HandleAdInterrupts()
+void InitUpdateAnalogSensors()
 {
-    if (PIE1bits.ADIE && PIR1bits.ADIF)
+    mUpdateSensorState = Idle;
+    mCurrentSensor = 0;
+}
+
+void StartUpdateAnalogSensors()
+{
+    // Sample the sensors each 100 mSec.
+    static uint8_t counter = 0;
+    
+    if (counter > 100)    
     {
-        PIR1bits.ADIF = 0;
-        ADCON0bits.ADON = 0; // Turn off A/D module
-        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;            
+        if (mUpdateSensorState == Idle)
+        {
+            mUpdateSensorState = StartNextConversion;
+            UpdateAnalogSensorReadings();
+        }
+        else
+        {
+#warning Test if this ever occurs.
+        }
+                
+        counter = 0;
     }
+    
+    counter++;
 }
 
 void UpdateAnalogSensorReadings()
 {    
-    // Check if conversion is finished
-    
+    // Light is the last sensor.
+    if (mCurrentSensor > Light)
+    {
+        mUpdateSensorState = Idle;
+    }
+    else
+    {
+        StartAcquisition(mCurrentSensor);
+        mUpdateSensorState = WaitOnResult;
+        mCurrentSensor++;
+    }
 }

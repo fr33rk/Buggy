@@ -13,5 +13,9 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>analog</word>
+            <word>Initializes</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

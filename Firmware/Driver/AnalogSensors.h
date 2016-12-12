@@ -10,20 +10,22 @@
 
 #include "Types.h"
 
-void InitAnalogSensors();
-
 typedef enum ANALOG_SENSOR
 {
-    DistanceLeft,
+    DistanceLeft = 0,
     DistanceFront,
     DistanceRight,
     Microphone,
     Light,
 } AnalogSensor;
 
+void InitAnalogSensors();
+
+void HandleAdInterrupts();
+
 uint16_t ReadSensor(AnalogSensor sensor);
 
-void UpdateAnalogSensorReadings();
+void StartUpdateAnalogSensors();
 
 #endif	/* ANALOGSENSORS_H */
 

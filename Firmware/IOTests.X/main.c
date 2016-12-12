@@ -14,6 +14,7 @@
 #include "LEDs.h"
 #include "Stm.Initialize.h"
 #include "Stm.Operational.h"
+#include "AnalogSensors.h"
 
 extern MessageFIFOBuffer UartInMessageBuffer;
 
@@ -38,6 +39,7 @@ void interrupt HighPrioInterrupt(void)
 void interrupt low_priority LowPrioInterrupt(void)
 {
     HandleUartInterrupts();
+    HandleAdInterrupts();
 }
 
 void main(void)

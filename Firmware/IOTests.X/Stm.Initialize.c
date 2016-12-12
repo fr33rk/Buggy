@@ -99,7 +99,7 @@ bool InitializeBuggy()
   
     HandleTimerInterrupt_0 = UpdateLedState;
     HandleTimerInterrupt_1 = UpdateGeneralCounter;
-    HandleTimerInterrupt_2 = UpdateAnalogSensorReadings;
+    HandleTimerInterrupt_2 = StartUpdateAnalogSensors;
     
     // Disable USB interrupt.
     PIE2bits.USBIE = 0;

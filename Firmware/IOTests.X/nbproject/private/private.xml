@@ -6,8 +6,14 @@
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.h</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.h</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/Stm.Initialize.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/Timing.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/MessageFIFOBuffer.h</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/MessageFIFOBuffer.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Speaker.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/main.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Timer.c</file>
         </group>
     </open-files>
 </project-private>
