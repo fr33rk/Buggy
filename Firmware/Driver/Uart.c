@@ -1,22 +1,29 @@
 #include <pic18f4455.h>
 #include <string.h>
-
 #include "Uart.h"
 #include "BuggyConfig.h"
 #include "LEDs.h"
 #include "BuggyCommands.h"
 #include "BuggyMemory.h"
 
-void HandleTxInterrupt();
-void HandleRxInterrupt();
-
-static MessageFIFOBuffer mUartOutMessageBuffer;
+// Add global variables here.
 MessageFIFOBuffer UartInMessageBuffer;
+
+// Add local variables here.
+#ifdef USE_UART_OUT_FIFO
+    static MessageFIFOBuffer mUartOutMessageBuffer;
+#else
+    static MessageFIFOElement mElementBeingSend;
+#endif
 
 static MessageFIFOElement *mpElementBeingSend;
 static uint8_t mElementBeingSendIndex;
 static MessageFIFOElement mElementBeingReceived;
 static uint8_t mElementBeingReceivedIndex;
+
+// Add function prototypes here.
+void HandleTxInterrupt();
+void HandleRxInterrupt();
 
 /**
  * Initializes the UART module. Messages send and received are buffered in a 5 
@@ -45,8 +52,10 @@ bool InitializeUart(const uint32_t baudrate)
         IPR1bits.RCIP = 0;    // Set the EUSART receive interrupt to low priority.
         PIE1bits.RCIE = 1;    // Enables the EUSART receive interrupt
         IPR1bits.TXIP = 0;    // Set the EUSART transmit interrupt to low priority.
-        
+
+#ifdef USE_UART_OUT_FIFO        
         InitFifo(&mUartOutMessageBuffer);
+#endif       
         InitFifo(&UartInMessageBuffer);
         mpElementBeingSend = NULL;
         mElementBeingSendIndex = 0;
@@ -78,7 +87,7 @@ void DisableUart()
 }
 
 /**
- * Send text via UART. Stringlength should be max MAX_MESSAGE_SIZE.
+ * Send text via UART. String length should be max MAX_MESSAGE_SIZE.
  * @param text, the text to send.
  */
 void UartSendString(const char* text)
@@ -93,9 +102,21 @@ void UartSendString(const char* text)
     
     memcpy(message.data, text, stringSize);
     // Add end of line characters
-    strncpy(&message.data[stringSize], "\r\n", 2);     
+    strncpy(&message.data[stringSize], "\r\n", 2);  
+    
+#ifdef USE_UART_OUT_FIFO    
     mUartOutMessageBuffer.Add(&mUartOutMessageBuffer, &message);
-        
+#else
+    if (mpElementBeingSend == NULL)
+    {
+        memcpy(&mElementBeingSend, &message, sizeof(message));        
+    }
+    else
+    {
+#warning Implement Error overflow
+    }
+#endif        
+    
     PIE1bits.TXIE = 1; // Enables the EUSART transmit interrupt
 }
 
@@ -157,6 +178,7 @@ void HandleTxInterrupt()
 {
     if (TXIF)
     {
+#ifdef USE_UART_OUT_FIFO            
         if (mpElementBeingSend == NULL)
         {
             if (mUartOutMessageBuffer.HasDataAvailable(&mUartOutMessageBuffer))
@@ -164,7 +186,7 @@ void HandleTxInterrupt()
                 mpElementBeingSend = mUartOutMessageBuffer.Peek(&mUartOutMessageBuffer);                
             }
         }
-
+#endif
         if (mpElementBeingSend != NULL)
         {
             char nextCharacter = mpElementBeingSend->data[mElementBeingSendIndex];
@@ -177,13 +199,15 @@ void HandleTxInterrupt()
                 // Done;
                 mpElementBeingSend = NULL;
                 mElementBeingSendIndex = 0;
+#ifdef USE_UART_OUT_FIFO                            
                 // Free used buffer.
                 mUartOutMessageBuffer.GetNext(&mUartOutMessageBuffer);
+#endif                
             }
         }
         else
         {
-            // Diable interrupt until message is set in the buffer again.
+            // Disable interrupt until message is set in the buffer again.
             PIE1bits.TXIE = 0;
         }
     }    

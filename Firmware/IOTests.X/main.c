@@ -16,8 +16,10 @@
 #include "Stm.Operational.h"
 #include "AnalogSensors.h"
 
+// Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
 
+// Add local variables here.
 enum MainState
 {
     Start,
@@ -26,8 +28,12 @@ enum MainState
     Error
 } mMainState;
 
+// Add function prototypes here.
 void ProcessMessages();
 
+/**
+ * Handler for the high priority interrupts.
+ */
 void interrupt HighPrioInterrupt(void)
 {
     if (TMR1IE && TMR1IF)
@@ -36,20 +42,22 @@ void interrupt HighPrioInterrupt(void)
     }   
 }
 
+/**
+ * Handler for the low priority interrupts.
+ */
 void interrupt low_priority LowPrioInterrupt(void)
 {
     HandleUartInterrupts();
     HandleAdInterrupts();
 }
 
+/**
+ * Main program loop.
+ */
 void main(void)
 {
     mMainState = Start;
-    
-#ifdef SIMULATED
-    MessageFIFOElement element;
-#endif
-    
+
     while (true)
     {
         if (mMainState >= Operational)

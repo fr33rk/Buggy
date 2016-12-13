@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.h</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.h</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/Counters.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/Stm.Initialize.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/Timing.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/MessageFIFOBuffer.h</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/MessageFIFOBuffer.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Speaker.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/ESP8266.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/main.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.c</file>

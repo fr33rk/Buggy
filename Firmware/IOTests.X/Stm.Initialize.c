@@ -67,11 +67,18 @@ bool InitializeStateMachine()
     }
 }
 
+/**
+ * Initialize the init state machine.
+ */
 void InitInitializeStateMachine()
 {
     mInitializationState = Idle;
 }
 
+/**
+ * Start the init state machine.
+ * @return true, when the state machine was started.
+ */
 bool StartInitializeStateMachine()
 {
    if(mInitializationState == Idle)

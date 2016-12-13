@@ -57,7 +57,6 @@ static char mRequestToSendMessage[] = "AT+CIPSEND=x,xx";
 static uint8_t mConnections;
 static uint8_t mConnectionIndex;
 
-
 const char *cMsgOk = "OK";
 
 // Add function prototypes here.
@@ -251,10 +250,6 @@ void SaveIpAddress(char * ipAddress)
         }                
     }
 }
-
-
-
-
 
 void StartOperationalEspStateMachine()
 {

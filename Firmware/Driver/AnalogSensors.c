@@ -1,14 +1,12 @@
 #include <pic18f4455.h>
 #include "AnalogSensors.h"
 
-const uint8_t AdInputChannel[5] = {0x01, 0x03, 0x04, 0x08, 0x09 };
-uint16_t ConversionResults[5];
+// Add global variables here.
 
-void StartAcquisition(AnalogSensor sensor);
-uint8_t GetResultIndex(uint8_t An);
-void InitUpdateAnalogSensors();
-void UpdateAnalogSensorReadings();
-AnalogSensor mCurrentSensor;
+// Add local variables here.
+const uint8_t AdInputChannel[5] = {0x01, 0x03, 0x04, 0x08, 0x09 };
+static uint16_t ConversionResults[5];
+static AnalogSensor mCurrentSensor;
 
 typedef enum UPDATE_SENSOR_STATE
 {
@@ -18,6 +16,30 @@ typedef enum UPDATE_SENSOR_STATE
 } enmUpdateSensorState;
 
 static enmUpdateSensorState mUpdateSensorState;
+
+// Add function prototypes here.
+void InitUpdateAnalogSensors();
+void UpdateAnalogSensorReadings();
+void StartAcquisition(AnalogSensor sensor);
+uint8_t GetResultIndex(uint8_t An);
+
+/**
+ * Interrupt handler for the A/D convertor.
+ */
+void HandleAdInterrupts()
+{
+    if (PIE1bits.ADIE && PIR1bits.ADIF)
+    {
+        PIR1bits.ADIF = 0;
+        ADCON0bits.ADON = 0; // Turn off A/D module
+        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;     
+        
+        if (mUpdateSensorState == StartNextConversion)
+        {
+            UpdateAnalogSensorReadings();
+        }
+    }
+}
 
 /**
  * Initializes the PIC to be able to read all of the buggy's analog sensors.
@@ -60,25 +82,8 @@ void InitAnalogSensors()
     PIR1bits.ADIF = 0; // Reset interrupt flag.
     PIE1bits.ADIE = 1; // Enables the A/D interrupt
     
+    // Initialize the state machine for automatic sensor reading.
     InitUpdateAnalogSensors();
-}
-
-/**
- * Interrupt handler for the A/D convertor.
- */
-void HandleAdInterrupts()
-{
-    if (PIE1bits.ADIE && PIR1bits.ADIF)
-    {
-        PIR1bits.ADIF = 0;
-        ADCON0bits.ADON = 0; // Turn off A/D module
-        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;     
-        
-        if (mUpdateSensorState == StartNextConversion)
-        {
-            UpdateAnalogSensorReadings();
-        }
-    }
 }
 
 /**
@@ -118,12 +123,19 @@ uint8_t GetResultIndex(uint8_t An)
     return result;
 }
 
+/**
+ * Initialize the analog sensor reading routine.
+ */
 void InitUpdateAnalogSensors()
 {
     mUpdateSensorState = Idle;
     mCurrentSensor = 0;
 }
 
+/**
+ * Start reading all analog sensors. Should be linked to a 1ms timer.
+ * Only fires once every x ms.
+ */
 void StartUpdateAnalogSensors()
 {
     // Sample the sensors each 100 mSec.
@@ -147,6 +159,9 @@ void StartUpdateAnalogSensors()
     counter++;
 }
 
+/**
+ * Read the next sensor or stop when all sensors have been read.
+ */
 void UpdateAnalogSensorReadings()
 {    
     // Light is the last sensor.

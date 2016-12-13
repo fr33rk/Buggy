@@ -3,6 +3,8 @@
 #include "ESP8266.h"
 
 // Add global variables here.
+
+// Add local variables here.
 typedef enum _OPERATIONAL_STATE
 {
     Idle,
@@ -11,8 +13,6 @@ typedef enum _OPERATIONAL_STATE
     Finalize,
 } enmOperationalState;
 
-
-// Add local variables here.
 static enmOperationalState mCurrentState;
 
 // Add function prototypes here.
@@ -48,13 +48,18 @@ bool OperationalStateMachine(void)
     }
 }
 
- 
-
+/**
+ * Initialize the operational state machine.
+ */
 void InitOperationalStateMachine(void)
 {
     mCurrentState = Idle;
 }
 
+/**
+ * Start the operational state machine.
+ * @return 
+ */
 bool StartOperationalStateMachine()
 {
     if(mCurrentState == Idle)

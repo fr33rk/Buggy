@@ -1,6 +1,7 @@
 #include "Timer.h"
 #include "BuggyConfig.h"
 
+// Add global variables here.
 OnTimerInterrupt HandleTimerInterrupt_0;
 OnTimerInterrupt HandleTimerInterrupt_1;
 OnTimerInterrupt HandleTimerInterrupt_2;

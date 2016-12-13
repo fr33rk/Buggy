@@ -1,15 +1,18 @@
 #include "LEDs.h"
 #include <pic18f4455.h>
 
-void BlinkLed(uint8_t index, uint16_t ledOffCount);
+// Add global variables here.
+#define LED_ON_COUNT 250
+#define LED_OFF_FAST_COUNT 500
+#define LED_OFF_SLOW_COUNT 1000
 
+// Add local variables here.
 static volatile enmLedState mCurrentLedStates[8];
 static uint16_t mLedOffCounter[8];
 static uint16_t mLedOnCounter[8];
 
-#define LED_ON_COUNT 250
-#define LED_OFF_FAST_COUNT 500
-#define LED_OFF_SLOW_COUNT 1000
+// Add function prototypes here.
+void BlinkLed(uint8_t index, uint16_t ledOffCount);
 
 /**
  * Initialize the hardware to enable the LED's.
