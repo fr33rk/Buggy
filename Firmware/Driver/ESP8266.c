@@ -5,6 +5,8 @@
 #include "LEDs.h"
 #include "Counters.h"
 
+#define MAX_CONNECTIONS 5
+
 // Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
 
@@ -27,16 +29,44 @@ typedef enum INITIALIZE_ESP_STATE
     Finalize
 } enmInitializeEspState;
 
-enmInitializeEspState mEspInitializationState;
+typedef enum OPERATIONAL_ESP_STATE
+{
+    OperationalIdle,
+    Parallel,
+    MessageReceived,
+    SavingChannel,
+    ClearingChannel,
+    ReceivingData,
+    RequestingSend,
+    WaitOnRequestGranted,
+    SendingMessage,
+    WaitingOnSendDone,
+} enmOperationalEspState;
+
+static enmInitializeEspState mEspInitializationState;
+static enmOperationalEspState mCurrentOperationalMainState;
+static enmOperationalEspState mCurrentOperationalSendState;
 
 static MessageFIFOElement mReceivedData;
 static MessageFIFOElement *mpReceivedData;
 static uint8_t mIpAddress;
 static bool mTriedReset;
+static char mOutMessage[MAX_MESSAGE_SIZE];
+static char *mpOutMessage = NULL;
+static char mRequestToSendMessage[] = "AT+CIPSEND=x,xx";
 static uint8_t mConnections;
+static uint8_t mConnectionIndex;
+
+
+const char *cMsgOk = "OK";
 
 // Add function prototypes here.
 void SaveIpAddress(char * ipAddress);
+bool RequestSend();
+
+void InitOperationalEdpStateMachine();
+void StartOperationalEspStateMachine();
+void ProcessReceivedMessage(const char *message);
 
 /**
 * The state machine when the module is in measure mode.
@@ -44,10 +74,6 @@ void SaveIpAddress(char * ipAddress);
 */
 bool InitializeEspStateMachine()
 {
-#ifdef SIMULATED
-    MessageFIFOElement element;
-#endif    
-    
     if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
     {
         mReceivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
@@ -61,11 +87,7 @@ bool InitializeEspStateMachine()
         case Start:
             // Start timer.
             mEspInitializationState = WaitOnStartUpDelayDone;
-#ifdef SIMULATED
-            SetTimer(0, 1);
-#else
             SetTimer(0, 5000);
-#endif            
             return true;
         case WaitOnStartUpDelayDone:
             if (IsTimerExpired(0))
@@ -79,15 +101,9 @@ bool InitializeEspStateMachine()
             UartSendString("AT");
             mEspInitializationState = WaitOnCheckingIfOperational;
             SetLedState(2, ContinuesOn);
-            
-#ifdef SIMULATED
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif            
-                        
             return true;
         case WaitOnCheckingIfOperational:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = GettingIp;                
@@ -97,14 +113,6 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIFSR");
             SetLedState(3, ContinuesOn);
             mEspInitializationState = WaitOnGettingIp;
-            
-#ifdef SIMULATED
-            strcpy(element.data, "+CIFSR:STAIP,\"192.168.5.19\"");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif                  
-            
             return true;
         case WaitOnGettingIp:
             if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "+CIFSR:STAIP", 12) == 0))
@@ -115,7 +123,7 @@ bool InitializeEspStateMachine()
             }
             return true;
         case WaitOnReceivedAllIpData:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = EnablingMultipleConnections;                
@@ -125,15 +133,9 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIPMUX=1");
             SetLedState(4, ContinuesOn);
             mEspInitializationState = WaitOnEnablingMultipleConnections;            
-            
-#ifdef SIMULATED
-            strcpy(element.data, "OK");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif      
-            
             return true;
         case WaitOnEnablingMultipleConnections:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, "OK", 2) == 0))
+            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
             {               
                 mpReceivedData = NULL;
                 mEspInitializationState = EnablingServer;                
@@ -143,17 +145,11 @@ bool InitializeEspStateMachine()
             UartSendString("AT+CIPSERVER=1,6090");
             SetLedState(5, ContinuesOn);
             mEspInitializationState = WaitOnEnablingServer; 
-            
-#ifdef SIMULATED
-            strcpy(element.data, "ERROR");
-            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);            
-#endif              
-            
             return true;
         case WaitOnEnablingServer:
             if (mpReceivedData != NULL) 
             {               
-                if (strncmp(mpReceivedData->data, "OK", 2) == 0)
+                if (strncmp(mpReceivedData->data, cMsgOk, 2) == 0)
                 {
                     mEspInitializationState = Finalize;
                 }
@@ -185,6 +181,7 @@ bool InitializeEspStateMachine()
             SetLedState(4, ContinuesOff);
             SetLedState(5, ContinuesOff);            
             mEspInitializationState = Idle;
+            StartOperationalEspStateMachine();
             return false;
         default:
             return false;    
@@ -255,32 +252,153 @@ void SaveIpAddress(char * ipAddress)
     }
 }
 
-bool ProcessConnectionInfo(const char *message)
+
+
+
+
+void StartOperationalEspStateMachine()
 {
-    bool process = true;
-    bool connected = false;
-    
-    if (strncmp(message + 2, "CONNECT", 7) == 0)
+    mpOutMessage = NULL;
+    mCurrentOperationalMainState = OperationalIdle;
+    mCurrentOperationalSendState = OperationalIdle;
+}
+
+void SendMessage(const char *message)
+{
+    strcpy(mOutMessage, message);
+    mpOutMessage = mOutMessage;
+}
+
+bool OperationalEspSendStateMachine(const char *message)
+{
+    switch(mCurrentOperationalSendState)
     {
-        connected = true;
+        case OperationalIdle:
+            if (mpOutMessage != NULL)                
+            {
+                mCurrentOperationalSendState = RequestingSend;
+                mConnectionIndex = 0;
+                return true;
+            }
+            return false;
+        case RequestingSend:
+            if (RequestSend())
+            {
+                mCurrentOperationalSendState = WaitOnRequestGranted;
+            }
+            else
+            {
+                mpOutMessage = NULL;
+                mCurrentOperationalSendState = OperationalIdle;
+            }
+            return true;
+        case WaitOnRequestGranted:
+            if ((message != NULL) && (strncmp(message, cMsgOk, 2) == 0))
+            {
+                mCurrentOperationalSendState = SendingMessage;                
+            }
+            return true;
+        case SendingMessage:
+            UartSendString(mpOutMessage);
+            mCurrentOperationalSendState = WaitingOnSendDone;
+            return true;
+        case WaitingOnSendDone:
+            if ((message != NULL) && (strncmp(message, "SEND OK", 7) == 0))
+            {
+                mCurrentOperationalSendState = RequestingSend;                
+            }
+            return true;
+        default:
+            return false;
     }
-    else if (strncmp(message + 2, "DISCONNECT", 10) != 0)
+}
+
+bool OperationalEspStateMachine()
+{
+    if ((mpReceivedData == NULL) && (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer)))
     {
-        process = false;
+        mReceivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
+        mpReceivedData = &mReceivedData;
     }
 
-    if (process)
+    switch(mCurrentOperationalMainState)
     {
-        char index[2];
-        strncpy(index, message, 1);
-        
-        if (connected)
-            mConnections |= 1 << atoi(index);
-        else
-            mConnections &= ~(1 << atoi(index));
-        
-        SetLedState(1, mConnections ? ContinuesOn : ContinuesOff);
+        case OperationalIdle:
+            if ((mpReceivedData != NULL) || (mpOutMessage != NULL))
+            {
+                mCurrentOperationalMainState = Parallel;
+            }
+            return true;
+        case Parallel:
+            if (mpReceivedData != NULL)
+            {
+                ProcessReceivedMessage(mpReceivedData->data);
+            }
+            if (!OperationalEspSendStateMachine(mpReceivedData != NULL ? mpReceivedData->data : NULL))
+            {
+                mCurrentOperationalMainState = OperationalIdle;
+            }
+            
+            mpReceivedData = NULL;
+            return true;
+        default:
+            return false;
     }
-    
-    return process;
+}
+
+void ProcessConnectionMessage(const bool connected, const char* message)
+{
+    char index[2];
+    strncpy(index, message, 1);
+
+    if (connected)
+        mConnections |= 1 << atoi(index);
+    else
+        mConnections &= ~(1 << atoi(index));
+
+    SetLedState(1, mConnections ? ContinuesOn : ContinuesOff);
+}
+
+void ProcessReceivedMessage(const char *message)
+{
+    if (strncmp(message + 2, "CONNECT", 7) == 0)
+    {
+        ProcessConnectionMessage(true, message);
+    }
+    else if (strncmp(message + 2, "CLOSED", 6) == 0)
+    {
+        ProcessConnectionMessage(false, message);
+    }
+    else if (strncmp(message, "+IPD", 4))
+    {
+        //
+    } 
+}
+
+bool RequestSend()
+{
+    for (mConnectionIndex;  mConnectionIndex < MAX_CONNECTIONS; mConnectionIndex++)
+    {
+        // Check if connected.
+        if ((mConnections & (1 << mConnectionIndex)) > 0)
+        {
+            char conversion[2];
+            // Set 'Channel'
+            itoa(conversion, mConnectionIndex, 10);
+            mRequestToSendMessage[11] = conversion[0]; 
+            
+            // Set message size.
+            itoa(conversion, strlen(mpOutMessage), 10);
+            strncpy(mRequestToSendMessage + 13, conversion, 2);
+            
+            // Send request.
+            UartSendString(mRequestToSendMessage);
+            
+            // For the next loop because the method ends before the 'for' loop
+            // can do it.
+            mConnectionIndex++;
+            return true;
+        }
+    }
+    return false;
 }

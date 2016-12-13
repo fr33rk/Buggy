@@ -54,7 +54,7 @@ void main(void)
     {
         if (mMainState >= Operational)
         {
-            ProcessMessages();
+            OperationalEspStateMachine();
         }
         
         switch (mMainState)
@@ -85,19 +85,4 @@ void main(void)
                 SetLedState(0, ContinuesOn);
         }
     }
-}
-
-void ProcessMessages()
-{
-    MessageFIFOElement receivedData;
-    
-    if (UartInMessageBuffer.HasDataAvailable(&UartInMessageBuffer))
-    {
-        receivedData = UartInMessageBuffer.GetNext(&UartInMessageBuffer);
-        
-        if (!ProcessConnectionInfo(receivedData.data))
-        {
-            
-        }
-    }    
 }

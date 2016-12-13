@@ -16,7 +16,9 @@ void InitInitializeEspStateMachine();
 
 bool StartInitializeEspStateMachine();
 
-bool ProcessConnectionInfo(const char *message);
+bool OperationalEspStateMachine();
+
+void SendMessage(const char *message);
 
 #endif	/* ESP8266_H */
 
