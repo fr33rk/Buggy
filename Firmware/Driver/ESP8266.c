@@ -25,6 +25,7 @@ typedef enum INITIALIZE_ESP_STATE
     WaitOnEnablingMultipleConnections,
     EnablingServer,
     WaitOnEnablingServer,
+    DecideToReset,
     Resetting,
     Finalize
 } enmInitializeEspState;
@@ -134,10 +135,17 @@ bool InitializeEspStateMachine()
             mEspInitializationState = WaitOnEnablingMultipleConnections;            
             return true;
         case WaitOnEnablingMultipleConnections:
-            if ((mpReceivedData != NULL) && (strncmp(mpReceivedData->data, cMsgOk, 2) == 0))
+            if (mpReceivedData != NULL)                     
             {               
-                mpReceivedData = NULL;
-                mEspInitializationState = EnablingServer;                
+                if (strncmp(mpReceivedData->data, cMsgOk, 2) == 0)
+                {
+                    mpReceivedData = NULL;
+                    mEspInitializationState = EnablingServer;                
+                }
+                else if (strncmp(mpReceivedData->data, "ERROR", 5) == 0)
+                {
+                    mEspInitializationState = DecideToReset;
+                } 
             }
             return true;            
         case EnablingServer:
@@ -154,23 +162,31 @@ bool InitializeEspStateMachine()
                 }
                 else if (strncmp(mpReceivedData->data, "ERROR", 5) == 0)
                 {
-                    if (!mTriedReset)
-                    {
-                        mEspInitializationState = Resetting;
-                    }
-                    else
-                    {
-                        mEspInitializationState = Finalize;
-                    }
+                    mEspInitializationState = DecideToReset;
                 }
                 mpReceivedData = NULL;
             }
             return true;
         
+        case DecideToReset:
+            if (!mTriedReset)
+            {
+                mEspInitializationState = Resetting;
+            }
+            else
+            {
+                mEspInitializationState = Finalize;
+            }     
+            return true;
         case Resetting:
             mTriedReset = true;
             UartSendString("AT+RST");
             DisableUart();
+            SetLedState(2, ContinuesOff);
+            SetLedState(3, ContinuesOff);
+            SetLedState(4, ContinuesOff);
+            SetLedState(5, ContinuesOff);  
+            
             mEspInitializationState = Start;
             return true;
             

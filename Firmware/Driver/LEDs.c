@@ -10,15 +10,20 @@
 static volatile enmLedState mCurrentLedStates[8];
 static uint16_t mLedOffCounter[8];
 static uint16_t mLedOnCounter[8];
+static volatile bool mFixedValueSet;
 
 // Add function prototypes here.
 void BlinkLed(uint8_t index, uint16_t ledOffCount);
+void SetLed(uint8_t index);
+void ClearLed(uint8_t index);
 
 /**
  * Initialize the hardware to enable the LED's.
  */
 void InitializeLeds()
 {
+    mFixedValueSet = false;
+    
     // Set all Port D ports to output
     TRISD = 0x00;
     
@@ -62,36 +67,47 @@ void SetLedState(uint8_t index, enmLedState ledState)
  */
 void UpdateLedState()
 {
-    for (uint8_t index = 0; index < 8; index++)
+    if (!mFixedValueSet)
     {
-        switch(mCurrentLedStates[index])
+        for (uint8_t index = 0; index < 8; index++)
         {
-            case ContinuesOn:
-                SetLed(index);
-                break;
-            case ContinuesOff:
-                ClearLed(index);
-                break;
-            case BlinkSlow:
-                BlinkLed(index, LED_OFF_SLOW_COUNT);
-                break;
-            case BlinkFast:
-                BlinkLed(index, LED_OFF_FAST_COUNT);
-                break;
-            default:
-                break;    
+            switch(mCurrentLedStates[index])
+            {
+                case ContinuesOn:
+                    SetLed(index);
+                    break;
+                case ContinuesOff:
+                    ClearLed(index);
+                    break;
+                case BlinkSlow:
+                    BlinkLed(index, LED_OFF_SLOW_COUNT);
+                    break;
+                case BlinkFast:
+                    BlinkLed(index, LED_OFF_FAST_COUNT);
+                    break;
+                default:
+                    break;    
+            }
         }
     }
 }
 
 /**
  * Display a uint8_t value as binary value using the LEDs.
- * Cannot be used n comabination with SetLedState/UpdateLedState construction.
  * @param value, int value that needs to be displayed.
  */
 void SetByteValueInLed(uint8_t value)
 {
+    mFixedValueSet = true;
     LATD = value;
+}
+
+/**
+ * Clear the previouslt set byte value and return to 'normal' operation.
+ */
+void ClearByteValueInLed()
+{
+    mFixedValueSet = false;
 }
 
 /**

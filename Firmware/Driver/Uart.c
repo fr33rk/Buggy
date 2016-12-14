@@ -110,6 +110,7 @@ void UartSendString(const char* text)
     if (mpElementBeingSend == NULL)
     {
         memcpy(&mElementBeingSend, &message, sizeof(message));        
+        mpElementBeingSend = &mElementBeingSend;
     }
     else
     {
