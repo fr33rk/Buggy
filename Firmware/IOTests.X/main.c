@@ -15,6 +15,7 @@
 #include "Stm.Initialize.h"
 #include "Stm.Operational.h"
 #include "AnalogSensors.h"
+#include "DigitalSensors.h"
 
 // Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
@@ -49,6 +50,7 @@ void interrupt low_priority LowPrioInterrupt(void)
 {
     HandleUartInterrupts();
     HandleAdInterrupts();
+    HandleDigitalInterrupts();
 }
 
 /**

@@ -7,7 +7,7 @@ typedef struct COUNTER
     bool IsRunning;
 } Counter;
 
-#define MAX_COUNTERS 3
+#define MAX_COUNTERS 5
 
 uint32_t mGeneralCounter;
 Counter mCounters[MAX_COUNTERS];

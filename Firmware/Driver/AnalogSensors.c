@@ -68,7 +68,6 @@ void InitAnalogSensors()
     // --- Microphone ---
     TRISBbits.RB2 = 1; // AN8
     
-    
     // --- A/D Conversion configuration
     ADCON1bits.VCFG0 = 0; // Voltage Reference- (Vss) 
     ADCON1bits.VCFG1 = 0; // Voltage Reference+ (Vdd) 
