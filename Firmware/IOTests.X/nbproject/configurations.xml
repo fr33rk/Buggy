@@ -12,6 +12,7 @@
         <itemPath>../Common/BuggyCommands.h</itemPath>
         <itemPath>../Common/BuggyMessage.h</itemPath>
         <itemPath>../Common/BuggyMemory.h</itemPath>
+        <itemPath>../Driver/DigitalSensors.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.h</itemPath>
@@ -43,6 +44,7 @@
         <itemPath>../Driver/Timer.c</itemPath>
         <itemPath>../Driver/ESP8266.c</itemPath>
         <itemPath>../Driver/AnalogSensors.c</itemPath>
+        <itemPath>../Driver/DigitalSensors.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>Stm.Initialize.c</itemPath>

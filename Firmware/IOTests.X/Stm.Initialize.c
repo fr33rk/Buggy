@@ -6,6 +6,7 @@
 #include "ESP8266.h"
 #include "Counters.h"
 #include "AnalogSensors.h"
+#include "DigitalSensors.h"
 
 // Add global variables here.
 extern OnTimerInterrupt HandleTimerInterrupt_0;
@@ -98,6 +99,7 @@ bool InitializeBuggy()
     InitCounters();
     InitMainTimer();
     InitAnalogSensors();
+    InitDigitalSensors();
     
     if (!InitializeUart(57600))
     {
