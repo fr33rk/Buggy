@@ -84,15 +84,20 @@ bool InitializeEspStateMachine()
         case Idle:
             return false;
         case Start:
+            // Clear the transmit buffer.
+            EnableUartTx();            
+            SendMessage("Dummy");
+            
             // Start timer.
-            mEspInitializationState = WaitOnStartUpDelayDone;
             SetTimer(0, 5000);
+            
+            mEspInitializationState = WaitOnStartUpDelayDone;
             return true;
         case WaitOnStartUpDelayDone:
             if (IsTimerExpired(0))
             {
                 ResetTimer(0);
-                EnableUart();
+                EnableUartRx();
                 mEspInitializationState = CheckingIfOperational;
             }
             return true;

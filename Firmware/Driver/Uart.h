@@ -13,7 +13,8 @@
 
 bool InitializeUart(const uint32_t baudrate);
 
-void EnableUart();
+void EnableUartRx();
+void EnableUartTx();
 
 void DisableUart();
 

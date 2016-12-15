@@ -69,11 +69,18 @@ bool InitializeUart(const uint32_t baudrate)
 }
 
 /**
- * Enable URAT reception and transmition.
+ * Enable UART reception.
  */
-void EnableUart()
+void EnableUartRx()
 {
-    RCSTAbits.CREN = 1;   // Enables Continuous Reception
+    RCSTAbits.CREN = 1;   // Enables Continuous Reception    
+}
+
+/**
+ * Enable UART transmition.
+ */
+void EnableUartTx()
+{
     TXSTAbits.TXEN = 1;   // Enables Transmission        
 }
 
@@ -102,7 +109,7 @@ void UartSendString(const char* text)
     
     memcpy(message.data, text, stringSize);
     // Add end of line characters
-    strncpy(&message.data[stringSize], "\r\n", 2);  
+    strncpy(&message.data[stringSize], "\r\n", 2);
     
 #ifdef USE_UART_OUT_FIFO    
     mUartOutMessageBuffer.Add(&mUartOutMessageBuffer, &message);
