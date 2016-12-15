@@ -1,5 +1,6 @@
 #include <pic18f4455.h>
 #include <string.h>
+#include <stdlib.h>
 #include "Uart.h"
 #include "BuggyConfig.h"
 #include "LEDs.h"
@@ -125,6 +126,31 @@ void UartSendString(const char* text)
 #endif        
     
     PIE1bits.TXIE = 1; // Enables the EUSART transmit interrupt
+}
+
+void UartSendBytes(const uint8_t *buffer, const uint8_t size)
+{
+    char hexValue[2];
+    
+    // Bytes will be send as HEX characters. So 1 byte takes 2 bytes to send.
+    if (size < (MAX_MESSAGE_SIZE / 2))
+    {
+        for (int index = 0; index < size; index++)
+        {
+            itoa(hexValue, buffer[index], 16);
+            
+            if (hexValue[1] != '\0')
+            {
+                mElementBeingSend.data[index * 2] = hexValue[0];
+                mElementBeingSend.data[index * 2 + 1] = hexValue[1];
+            }
+            else
+            {
+                mElementBeingSend.data[index * 2] = '0';
+                mElementBeingSend.data[index * 2 + 1] = hexValue[0];
+            }
+        }
+    }
 }
 
 /**

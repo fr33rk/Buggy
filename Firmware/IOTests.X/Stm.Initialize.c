@@ -49,8 +49,11 @@ bool InitializeStateMachine()
             mInitializationState = InitializingEsp;
             return true;
         case InitializingEsp:
+#ifndef SIMULATED            
             if (!InitializeEspStateMachine())
+#endif                
             {
+                
                 SetLedState(0, BlinkSlow);
                 SetLedState(1, ContinuesOff);
                 mInitializationState = Finalize;
