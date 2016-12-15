@@ -1,6 +1,7 @@
 #include "Types.h"
 #include "Counters.h"
 #include "ESP8266.h"
+#include "Uart.h"
 
 // Add global variables here.
 
@@ -28,13 +29,19 @@ bool OperationalStateMachine(void)
         case Idle:
             return false;
         case Start:
-            SetTimer(0, 5000);
+#ifdef SIMULATED
+            SetTimer(0, 1);
+#else
+            SetTimer(0, 5000);            
+#endif            
             mCurrentState = SendingMessage;
             return true;
         case SendingMessage:
             if (IsTimerExpired(0))
             {
-                SendMessage("Hello world");
+                //SendMessage("Hello world");
+                uint8_t testBuffer[4] = { 21, 9, 19, 78 };
+                UartSendBytes(testBuffer, 4);
                 ResetTimer(0);
                 mCurrentState = Start;
             }

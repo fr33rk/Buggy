@@ -5,14 +5,13 @@
         <group>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/Counters.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/Stm.Operational.c</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.h</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/Stm.Initialize.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/DigitalSensors.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/DigitalSensors.h</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Common/Counters.h</file>
+            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/ESP8266.c</file>
+            <file>file:/C:/Program%20Files%20(x86)/Microchip/xc8/v1.38/sources/common/atoi.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/main.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/AnalogSensors.c</file>
             <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/Driver/Uart.c</file>
-            <file>file:/D:/Ontwikkeling/Eigen/Buggy/Firmware/IOTests.X/Stm.Initialize.h</file>
+            <file>file:/C:/Program%20Files%20(x86)/Microchip/xc8/v1.38/sources/common/itoa.c</file>
         </group>
     </open-files>
 </project-private>

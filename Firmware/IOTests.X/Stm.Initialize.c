@@ -47,14 +47,13 @@ bool InitializeStateMachine()
             InitInitializeEspStateMachine();
             StartInitializeEspStateMachine();
             mInitializationState = InitializingEsp;
-
-            // Clear the communication buffers.
-            UartSendString("Dummy");
-            
             return true;
         case InitializingEsp:
+#ifndef SIMULATED            
             if (!InitializeEspStateMachine())
+#endif                
             {
+                
                 SetLedState(0, BlinkSlow);
                 SetLedState(1, ContinuesOff);
                 mInitializationState = Finalize;
