@@ -131,6 +131,7 @@ void UartSendString(const char* text)
 
 void UartSendBytes(const uint8_t *buffer, const uint8_t size)
 {
+#ifndef USE_UART_OUT_FIFO
     char hexValue[2];
     
     // Bytes will be send as HEX characters. So 1 byte takes 2 bytes to send.
@@ -152,6 +153,7 @@ void UartSendBytes(const uint8_t *buffer, const uint8_t size)
             }
         }
     }
+#endif
 }
 
 /**

@@ -10,11 +10,6 @@
 
 #include "Types.h"
 
-bool Button1Down;
-bool Button1Clicked;
-bool Button2Down;
-bool Button2Clicked;
-
 void InitDigitalSensors();
 void HandleDigitalInterrupts();
 

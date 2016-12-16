@@ -297,7 +297,7 @@ bool OperationalEspSendStateMachine(const char *message)
                 return true;
             }
             return false;
-        case RequestingSend:
+        case RequestingSend:            
             if (RequestSend())
             {
                 mCurrentOperationalSendState = WaitOnRequestGranted;
@@ -309,9 +309,10 @@ bool OperationalEspSendStateMachine(const char *message)
             }
             return true;
         case WaitOnRequestGranted:
+            
             if ((message != NULL) && (strncmp(message, cMsgOk, 2) == 0))
             {
-                mCurrentOperationalSendState = SendingMessage;                
+                mCurrentOperationalSendState = SendingMessage;
             }
             return true;
         case SendingMessage:
@@ -321,7 +322,7 @@ bool OperationalEspSendStateMachine(const char *message)
         case WaitingOnSendDone:
             if ((message != NULL) && (strncmp(message, "SEND OK", 7) == 0))
             {
-                mCurrentOperationalSendState = RequestingSend;                
+                mCurrentOperationalSendState = RequestingSend;
             }
             return true;
         default:
@@ -364,15 +365,15 @@ bool OperationalEspStateMachine()
 
 void ProcessConnectionMessage(const bool connected, const char* message)
 {
-    char index[2];
+    char index[2] = "\0\0";
     strncpy(index, message, 1);
-
+  
     if (connected)
-        mConnections |= 1 << atoi(index);
+        mConnections |= (1 << atoi(index));
     else
         mConnections &= ~(1 << atoi(index));
-
-    SetLedState(1, mConnections ? ContinuesOn : ContinuesOff);
+    
+    SetLedState(1, mConnections > 0 ? ContinuesOn : ContinuesOff);
 }
 
 void ProcessReceivedMessage(const char *message)
@@ -417,4 +418,13 @@ bool RequestSend()
         }
     }
     return false;
+}
+
+/**
+ * Get the IP address assigned to the module.
+ * @return The last part of the IP address.
+ */
+uint8_t GetIpAddress()
+{
+    return mIpAddress;
 }

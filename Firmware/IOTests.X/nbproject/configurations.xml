@@ -531,7 +531,7 @@
       </makeCustomizationType>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
-        <property key="define-macros" value="USE_UART_OUT_FIFO"/>
+        <property key="define-macros" value=""/>
         <property key="disable-optimizations" value="false"/>
         <property key="extra-include-directories" value="..\Common;..\Driver"/>
         <property key="favor-optimization-for" value="-speed,+space"/>

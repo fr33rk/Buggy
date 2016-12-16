@@ -3,6 +3,12 @@
 
 #include "DigitalSensors.h"
 #include "Counters.h"
+#include "LEDs.h"
+
+bool Button1Down;
+bool Button1Clicked;
+bool Button2Down;
+bool Button2Clicked;
 
 void InitDigitalSensors()
 {
@@ -35,7 +41,7 @@ void HandleDigitalInterrupts()
     {
         if (PORTBbits.RB4)
         {
-            if (IsTimerExpired(4))
+            if (!IsTimerSet(4) || IsTimerExpired(4))
             {
                 Button1Down = true;
                 Button1Clicked = false;

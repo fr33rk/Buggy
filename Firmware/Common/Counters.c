@@ -91,3 +91,13 @@ bool IsTimerExpired(uint8_t counterNo)
     }
     return false;
 }
+
+/**
+ * Test if a timer has already been set.
+ * @param counterNo, the counter to test.
+ * @return True, when the counter has been set.
+ */
+bool IsTimerSet(uint8_t counterNo)
+{
+    return mCounters[counterNo].IsRunning;
+}

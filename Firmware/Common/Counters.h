@@ -16,6 +16,8 @@ bool SetTimer(uint8_t counterNo, uint32_t duration);
 
 bool ResetTimer(uint8_t counterNo);
 
+bool IsTimerSet(uint8_t counterNo);
+
 bool IsTimerExpired(uint8_t counterNo);
 
 #endif	/* COUNTERS_H */

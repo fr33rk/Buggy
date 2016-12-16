@@ -20,5 +20,7 @@ bool OperationalEspStateMachine();
 
 void SendMessage(const char *message);
 
+uint8_t GetIpAddress();
+
 #endif	/* ESP8266_H */
 
