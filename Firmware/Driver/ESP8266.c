@@ -285,6 +285,36 @@ void SendMessage(const char *message)
     mpOutMessage = mOutMessage;
 }
 
+void SendBuffer(const uint8_t *buffer, const uint8_t size)
+{
+    char hexValue[3] = "\0\0\0";
+    
+    // Bytes will be send as HEX characters. So 1 byte takes 2 bytes to send.
+    if (size < (MAX_MESSAGE_SIZE / 2))
+    {
+        uint8_t index;
+        for (index = 0; index < size; index++)
+        {
+            itoa(hexValue, buffer[index], 16);
+            
+            if (hexValue[1] != '\0')
+            {
+                mOutMessage[index * 2] = hexValue[0];
+                mOutMessage[index * 2 + 1] = hexValue[1];
+            }
+            else
+            {
+                mOutMessage[index * 2] = '0';
+                mOutMessage[index * 2 + 1] = hexValue[0];
+            }
+        }
+        
+        mOutMessage[size * 2] = '\r';
+        mOutMessage[size * 2 + 1] = '\n';
+        mpOutMessage = mOutMessage;
+    }
+}
+
 bool OperationalEspSendStateMachine(const char *message)
 {
     switch(mCurrentOperationalSendState)

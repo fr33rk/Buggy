@@ -1,11 +1,12 @@
 #include <pic18f4455.h>
 #include "AnalogSensors.h"
+#include "LEDs.h"
 
 // Add global variables here.
 
 // Add local variables here.
 const uint8_t AdInputChannel[5] = {0x01, 0x03, 0x04, 0x08, 0x09 };
-static uint16_t ConversionResults[5];
+static uint16_t mConversionResults[5];
 static AnalogSensor mCurrentSensor;
 
 typedef enum UPDATE_SENSOR_STATE
@@ -32,12 +33,8 @@ void HandleAdInterrupts()
     {
         PIR1bits.ADIF = 0;
         ADCON0bits.ADON = 0; // Turn off A/D module
-        ConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;     
-        
-        if (mUpdateSensorState == StartNextConversion)
-        {
-            UpdateAnalogSensorReadings();
-        }
+        mConversionResults[GetResultIndex(ADCON0bits.CHS)] = ADRES;     
+        UpdateAnalogSensorReadings();
     }
 }
 
@@ -73,7 +70,7 @@ void InitAnalogSensors()
     ADCON1bits.VCFG1 = 0; // Voltage Reference+ (Vdd) 
     ADCON1bits.PCFG = 0x05; // Enable AN0 to AN9
     
-    ADCON2bits.ADFM = 0; // Left justified.
+    ADCON2bits.ADFM = 1; // Right justified.
     ADCON2bits.ACQT = 0x01; // Acquisition time (2 Tad)
     ADCON2bits.ADCS = 0x06; // A/D Conversion Clock Select bits (Fosc/64)
     
@@ -149,7 +146,7 @@ void StartUpdateAnalogSensors()
         }
         else
         {
-#warning Test if this ever occurs.
+#warning Test if this ever occurs.     
         }
                 
         counter = 0;
@@ -167,11 +164,16 @@ void UpdateAnalogSensorReadings()
     if (mCurrentSensor > Light)
     {
         mUpdateSensorState = Idle;
+        mCurrentSensor = 0;
     }
     else
     {
-        StartAcquisition(mCurrentSensor);
-        mUpdateSensorState = WaitOnResult;
-        mCurrentSensor++;
+        StartAcquisition(mCurrentSensor++);
+        mUpdateSensorState = WaitOnResult;        
     }
+}
+
+uint16_t GetLastReading(AnalogSensor sensor)
+{
+    return mConversionResults[sensor];
 }

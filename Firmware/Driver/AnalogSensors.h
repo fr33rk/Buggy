@@ -27,5 +27,7 @@ uint16_t ReadSensor(AnalogSensor sensor);
 
 void StartUpdateAnalogSensors();
 
+uint16_t GetLastReading(AnalogSensor sensor);
+
 #endif	/* ANALOGSENSORS_H */
 

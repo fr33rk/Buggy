@@ -1,10 +1,12 @@
 #include <string.h>
+#include <pic18.h>
 
 #include "Types.h"
 #include "Counters.h"
 #include "ESP8266.h"
 #include "Uart.h"
 #include "DigitalSensors.h"
+#include "AnalogSensors.h"
 #include "LEDs.h"
 
 #include "MessageFIFOBuffer.h"
@@ -49,22 +51,34 @@ bool OperationalStateMachine(void)
         case Idle:
             return false;
         case Start:
-            
-//            memcpy(element.data, "0,CONNECT", 9);
-//            UartInMessageBuffer.Add(&UartInMessageBuffer, &element);
 #ifdef SIMULATED
             SetTimer(0, 1);
 #else
-            SetTimer(0, 5000);            
+            SetTimer(0, 200);            
 #endif            
             mCurrentState = SendingMessage;
             return true;
         case SendingMessage:
             if (IsTimerExpired(0))
             {                
-                SendMessage("Hello world");
-                //uint8_t testBuffer[4] = { 21, 9, 19, 78 };
-                //UartSendBytes(testBuffer, 4);
+                uint16_t sensorVal = GetLastReading(DistanceLeft);
+                uint8_t testBuffer[8];
+                testBuffer[0] = HIGH_BYTE(sensorVal);
+                testBuffer[1] = LOW_BYTE(sensorVal);
+
+                sensorVal = GetLastReading(DistanceFront);
+                testBuffer[2] = HIGH_BYTE(sensorVal);
+                testBuffer[3] = LOW_BYTE(sensorVal);
+                
+                sensorVal = GetLastReading(DistanceRight);
+                testBuffer[4] = HIGH_BYTE(sensorVal);
+                testBuffer[5] = LOW_BYTE(sensorVal);
+                
+                sensorVal = GetLastReading(Light);
+                testBuffer[6] = HIGH_BYTE(sensorVal);
+                testBuffer[7] = LOW_BYTE(sensorVal);
+
+                SendBuffer(testBuffer, 8);
                 ResetTimer(0);
                 mCurrentState = Start;
             }
