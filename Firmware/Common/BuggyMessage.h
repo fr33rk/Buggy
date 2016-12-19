@@ -14,7 +14,8 @@
 typedef struct BUGGYMESSAGE
 {
     // Word 0
-    CommandId Command : 7;     // Command ID
+    //CommandId Command : 7;     // Command ID
+    uint8_t Command : 7;
     uint8_t RTR : 1;         // Must be dominant (0) for data frames and recessive (1) for remote request frames
     
     // Word 1
