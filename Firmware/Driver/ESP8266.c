@@ -418,8 +418,27 @@ void ProcessReceivedMessage(const char *message)
     }
     else if (strncmp(message, "+IPD", 4))
     {
-        //
+        ProcessIncommingCommand(message);
     } 
+}
+
+void ProcessIncommingCommand(const char *message)
+{
+    //+IPD,0,20:123456789123456789
+    uint8_t sizePos = 7;
+    uint8_t datasize = 0;
+    char digit;
+    bool done = false;
+    
+    while (!done)
+    {
+        digit = message[sizePos];
+        if (digit != ':')
+        {
+            datasize = datasize * 10 + atoi(digit);
+        }
+    }
+    
 }
 
 bool RequestSend()

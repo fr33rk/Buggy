@@ -10,6 +10,7 @@
 
 typedef enum COMMANDID
 {
+    cmdUnknown        = 0x00,
     cmdVersionReq     = 0x02,
     cmdVersion        = 0x03,
     cmdReset          = 0x04,
@@ -17,7 +18,8 @@ typedef enum COMMANDID
     cmdSensorReq      = 0x06,
     cmdSensorResult   = 0x07,
     cmdSteerMotor     = 0x08,
-    cmdSteerMotorDone = 0x09    
+    cmdSteerMotorDone = 0x09,
+    cmdSendError      = 0x0A        
 } CommandId;
 
 

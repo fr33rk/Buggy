@@ -15,6 +15,11 @@ typedef struct BUGGY_MEMORY
 {
     bool IsInError;
     ErrorCode ErrorCode;
+    
+    CommandId NextCommand;
+    uint16_t NextTaskId;
+    uint8_t *NextCommandParams;
+    
 } BuggyMemory_T;
 
 BuggyMemory_T BuggyMemory;
