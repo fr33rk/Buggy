@@ -9,6 +9,7 @@
 
 // Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
+OnReceivedData ReceivedDataHandler;
 
 // Add local variables here.
 typedef enum INITIALIZE_ESP_STATE
@@ -67,6 +68,7 @@ bool RequestSend();
 void InitOperationalEdpStateMachine();
 void StartOperationalEspStateMachine();
 void ProcessReceivedMessage(const char *message);
+void ProcessIncommingCommand(const char *message);
 
 /**
 * The state machine when the module is in measure mode.
@@ -424,21 +426,30 @@ void ProcessReceivedMessage(const char *message)
 
 void ProcessIncommingCommand(const char *message)
 {
-    //+IPD,0,20:123456789123456789
-    uint8_t sizePos = 7;
-    uint8_t datasize = 0;
-    char digit;
-    bool done = false;
-    
-    while (!done)
+    if (ReceivedDataHandler)
     {
-        digit = message[sizePos];
-        if (digit != ':')
+        //+IPD,0,20:123456789123456789
+        uint8_t sizePos = 7;
+        uint8_t datasize = 0;
+        char digit;
+        bool done = false;
+
+        while (!done)
         {
-            datasize = datasize * 10 + atoi(digit);
+            digit = message[sizePos];
+            done = digit == ':';
+            if (!done)
+            {
+                datasize = datasize * 10 + atoi(digit);
+                sizePos++;
+            }
+        }
+
+        if (datasize > 0)
+        {
+            ReceivedDataHandler(message[0] + datasize);
         }
     }
-    
 }
 
 bool RequestSend()

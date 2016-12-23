@@ -12,7 +12,8 @@
 extern OnTimerInterrupt HandleTimerInterrupt_0;
 extern OnTimerInterrupt HandleTimerInterrupt_1;
 extern OnTimerInterrupt HandleTimerInterrupt_2;
- 
+extern OnReceivedData HandleReceivedData; 
+
 // Add local variables here.
 typedef enum INITIALIZE_STATE
 {
@@ -108,6 +109,7 @@ bool InitializeBuggy()
     HandleTimerInterrupt_0 = UpdateLedState;
     HandleTimerInterrupt_1 = UpdateGeneralCounter;
     HandleTimerInterrupt_2 = StartUpdateAnalogSensors;
+    HandleReceivedData = 
     
     // Disable USB interrupt.
     PIE2bits.USBIE = 0;

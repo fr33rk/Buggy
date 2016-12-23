@@ -10,19 +10,20 @@
 
 #include "Types.h"
 #include "BuggyCommands.h"
+#include "BuggyMessage.h"
 
-typedef struct BUGGY_MEMORY
+typedef struct
 {
     bool IsInError;
     ErrorCode ErrorCode;
     
-    CommandId NextCommand;
-    uint16_t NextTaskId;
-    uint8_t *NextCommandParams;
-    
+    BuggyMessage LastMessage;
+    BuggyMessage *pLastMessage;    
 } BuggyMemory_T;
 
 BuggyMemory_T BuggyMemory;
+
+void StoreBuggyMessage(uint8_t message);
 
 #endif	/* BUGGYMEMORY_H */
 

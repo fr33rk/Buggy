@@ -2,17 +2,23 @@
 
 #include "BuggyMemory.h"
 #include "BuggyMessage.h"
-#include "Version.h"
 #include "AnalogSensors.h"
+#include "MessageFIFOBuffer.h"
+
+void ReceiveMessage(const uint8_t *message)
+{
+    memcpy (BuggyMemory.LastMessage.AsBuffer, message, MAX_MESSAGE_SIZE);
+    BuggyMemory.pLastMessage = &BuggyMemory.LastMessage;
+}
 
 void CreateVersionMessage(BuggyMessage *pMessage)
 {
     pMessage->Command = cmdVersion;
     pMessage->DataSize = 3;
     
-    pMessage->Data[0] = MAJOR;
-    pMessage->Data[1] = MINOR;
-    pMessage->Data[2] = BUILD;
+//    pMessage->Data[0] = MAJOR;
+//    pMessage->Data[1] = MINOR;
+//    pMessage->Data[2] = BUILD;
 }
 
 void CreateResetDoneMessage(BuggyMessage *pMessage)

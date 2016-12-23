@@ -34,5 +34,7 @@ typedef union BUGGYMESSAGE
 
 void CreateVersionMessage(BuggyMessage *pmessage);
 
+void ReceiveMessage(const uint8_t *message)
+
 #endif	/* BUGGYMESSAGE_H */
 
