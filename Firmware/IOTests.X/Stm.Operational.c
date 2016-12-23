@@ -10,6 +10,7 @@
 #include "LEDs.h"
 
 #include "MessageFIFOBuffer.h"
+#include "BuggyMessage.h"
 
 // Add global variables here.
 extern bool Button1Clicked;
@@ -60,7 +61,12 @@ bool OperationalStateMachine(void)
             return true;
         case SendingMessage:
             if (IsTimerExpired(0))
-            {                
+            {            
+                BuggyMessage message;
+                CreateVersionMessage(&message);
+                SendBuffer(message.AsBuffer, 12);
+                
+                
                 uint16_t sensorVal = GetLastReading(DistanceLeft);
                 uint8_t testBuffer[8];
                 testBuffer[0] = HIGH_BYTE(sensorVal);

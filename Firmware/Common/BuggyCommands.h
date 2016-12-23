@@ -10,14 +10,22 @@
 
 typedef enum COMMANDID
 {
-    cmdVersion = 0x01,
-    
+    cmdUnknown        = 0x00,
+    cmdVersionReq     = 0x02,
+    cmdVersion        = 0x03,
+    cmdReset          = 0x04,
+    cmdResetDone      = 0x05,
+    cmdSensorReq      = 0x06,
+    cmdSensorResult   = 0x07,
+    cmdSteerMotor     = 0x08,
+    cmdSteerMotorDone = 0x09,
+    cmdSendError      = 0x0A        
 } CommandId;
 
 
 typedef enum ERROR_CODES
 {
-    errRxFifoBufferOverflow,
+    errRxFifoBufferOverflow = 0x01,        
 } ErrorCode;
 
 #endif	/* BUGGYCOMMANDS_H */

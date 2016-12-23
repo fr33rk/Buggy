@@ -81,22 +81,7 @@ void InitAnalogSensors()
     // Initialize the state machine for automatic sensor reading.
     InitUpdateAnalogSensors();
 }
-
-/**
- * Execute a 'stand alone' AD reading. Make sure that the
- * automatic (timed) AD conversions has been switched off (StartUpdateAnalogSensors)
- * @param sensor, The sensor that needs to be read.
- * @return The read value.
- */
-uint16_t ReadSensor(AnalogSensor sensor)
-{
-    StartAcquisition(sensor);
-        
-    while(!ADCON0bits.GODONE);
-    
-    return ADRES;
-}
-    
+  
 void StartAcquisition(AnalogSensor sensor)
 {
     ADCON0bits.CHS = AdInputChannel[sensor];

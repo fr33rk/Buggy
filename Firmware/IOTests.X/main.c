@@ -67,6 +67,8 @@ void main(void)
             OperationalEspStateMachine();
         }
         
+        
+        
         switch (mMainState)
         {
             case Start:
