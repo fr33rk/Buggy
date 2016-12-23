@@ -19,7 +19,6 @@ void EnableUartTx();
 void DisableUart();
 
 void UartSendString(const char* text);
-void UartSendBytes(const uint8_t *buffer, const uint8_t size);
 
 void HandleUartInterrupts();
 
