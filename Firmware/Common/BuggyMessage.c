@@ -1,24 +1,40 @@
 #include <pic18.h>
 
+#include <string.h>
 #include "BuggyMemory.h"
 #include "BuggyMessage.h"
-#include "AnalogSensors.h"
 #include "MessageFIFOBuffer.h"
 
+/**
+ * Store a received message in memory for later processing.
+ * @param message
+ */
 void ReceiveMessage(const uint8_t *message)
 {
-    memcpy (BuggyMemory.LastMessage.AsBuffer, message, MAX_MESSAGE_SIZE);
-    BuggyMemory.pLastMessage = &BuggyMemory.LastMessage;
+    memcpy (BuggyMemory.LastMessage.AsBuffer, message, BUGGY_MESSAGE_SIZE);
+    BuggyMemory.pLastMessage = &BuggyMemory.LastMessage;    
 }
 
-void CreateVersionMessage(BuggyMessage *pMessage)
+void InitMessage(BuggyMessage *pMessage, uint8_t command, uint16_t taskId)
 {
-    pMessage->Command = cmdVersion;
+    memset(pMessage, 0, sizeof(BuggyMessage));
+    pMessage->Command = command;
+    pMessage->TaskId = taskId;
+}
+
+/**
+ * Create a version answer message.
+ * @param pMessage, pointer to the message that is populated.
+ * @param taskId, the task id.
+ */
+void CreateVersionMessage(BuggyMessage *pMessage, uint16_t taskId)
+{
+    InitMessage(pMessage, cmdVersion, taskId);
     pMessage->DataSize = 3;
     
-//    pMessage->Data[0] = MAJOR;
-//    pMessage->Data[1] = MINOR;
-//    pMessage->Data[2] = BUILD;
+    pMessage->Data[0] = 0;//MAJOR;
+    pMessage->Data[1] = 1;//MINOR;
+    pMessage->Data[2] = 0;//BUILD;
 }
 
 void CreateResetDoneMessage(BuggyMessage *pMessage)
@@ -27,14 +43,21 @@ void CreateResetDoneMessage(BuggyMessage *pMessage)
     pMessage->DataSize = 0;
 }
 
-void CreateSensorResultMessage(BuggyMessage *pMessage, AnalogSensor sensor, uint16_t value)
+/**
+ * Create a sensor result message.
+ * @param pMessage, pointer to the message that is populated.
+ * @param sensor, the sensor that is requested.
+ * @param value, the read-out of the sensor.
+ * @param taskId, the task id.
+ */
+void CreateSensorResultMessage(BuggyMessage *pMessage, AnalogSensor sensor, uint16_t value, uint16_t taskId)
 {
-    pMessage->Command = cmdSensorResult;
+    InitMessage(pMessage, cmdSensorResult, taskId);
     pMessage->DataSize = 3;
-    
+
     pMessage->Data[0] = sensor;
-    pMessage->Data[1] = HIGH_BYTE(sensor);
-    pMessage->Data[2] = LOW_BYTE(sensor);            
+    pMessage->Data[1] = HIGH_BYTE(value);
+    pMessage->Data[2] = LOW_BYTE(value);
 }
 
 void CreateAllSensorResultMessage(BuggyMessage *pMessage)

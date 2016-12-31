@@ -7,12 +7,16 @@
 #include "Counters.h"
 #include "AnalogSensors.h"
 #include "DigitalSensors.h"
+#include "BuggyMessage.h"
+#include "BuggyMemory.h"
+
+#include <string.h>
 
 // Add global variables here.
 extern OnTimerInterrupt HandleTimerInterrupt_0;
 extern OnTimerInterrupt HandleTimerInterrupt_1;
 extern OnTimerInterrupt HandleTimerInterrupt_2;
-extern OnReceivedData HandleReceivedData; 
+extern OnReceivedData ReceivedDataHandler;
 
 // Add local variables here.
 typedef enum INITIALIZE_STATE
@@ -54,7 +58,6 @@ bool InitializeStateMachine()
             if (!InitializeEspStateMachine())
 #endif                
             {
-                
                 SetLedState(0, BlinkSlow);
                 SetLedState(1, ContinuesOff);
                 mInitializationState = Finalize;
@@ -94,7 +97,8 @@ bool StartInitializeStateMachine()
 bool InitializeBuggy()
 {
     RCONbits.IPEN = 1;    // Enable priority levels on interrupts
-    
+ 
+    memset(&BuggyMemory, 0, sizeof(BuggyMemory_T));
     InitializeLeds();
     InitCounters();
     InitMainTimer();
@@ -109,7 +113,7 @@ bool InitializeBuggy()
     HandleTimerInterrupt_0 = UpdateLedState;
     HandleTimerInterrupt_1 = UpdateGeneralCounter;
     HandleTimerInterrupt_2 = StartUpdateAnalogSensors;
-    HandleReceivedData = 
+    ReceivedDataHandler = ReceiveMessage;
     
     // Disable USB interrupt.
     PIE2bits.USBIE = 0;

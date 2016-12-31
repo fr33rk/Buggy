@@ -418,7 +418,7 @@ void ProcessReceivedMessage(const char *message)
     {
         ProcessConnectionMessage(false, message);
     }
-    else if (strncmp(message, "+IPD", 4))
+    else if (strncmp(message, "+IPD", 4) == 0)
     {
         ProcessIncommingCommand(message);
     } 
@@ -428,26 +428,42 @@ void ProcessIncommingCommand(const char *message)
 {
     if (ReceivedDataHandler)
     {
-        //+IPD,0,20:123456789123456789
-        uint8_t sizePos = 7;
+        uint8_t position = 7;
         uint8_t datasize = 0;
         char digit;
         bool done = false;
 
         while (!done)
         {
-            digit = message[sizePos];
+            digit = message[position];
             done = digit == ':';
             if (!done)
             {
-                datasize = datasize * 10 + atoi(digit);
-                sizePos++;
+                datasize = (datasize * 10) + (digit - '0');
             }
+            position++;
         }
 
-        if (datasize > 0)
+        if (datasize % 2 != 0)
         {
-            ReceivedDataHandler(message[0] + datasize);
+#warning Raise an error.
+        }
+        else if (datasize > 0)
+        {
+           char hexValue[3] = { 0, 0, 0}; 
+           
+           uint8_t rawMessage[MAX_MESSAGE_SIZE];
+           uint8_t rawMessagePosition = 0;
+           memset(rawMessage, 0, MAX_MESSAGE_SIZE);
+
+           // Translate message from ASCII hex to 'real'hex.
+           while ((rawMessagePosition * 2) < datasize)
+           {
+               hexValue[0] = message[position++];
+               hexValue[1] = message[position++];
+               rawMessage[rawMessagePosition++] = xtoi(hexValue);
+           }
+           ReceivedDataHandler(rawMessage);
         }
     }
 }

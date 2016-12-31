@@ -11,11 +11,15 @@
 #include "Types.h"
 #include "BuggyCommands.h"
 #include "BuggyMessage.h"
+#include "AnalogSensors.h"
 
-typedef struct
+typedef struct BUGGY_MEMORY
 {
     bool IsInError;
     ErrorCode ErrorCode;
+    AnalogSensor SensorSelected;
+    bool SendSensorUpdates;
+    uint16_t SendSensorUpdatesTaskId;
     
     BuggyMessage LastMessage;
     BuggyMessage *pLastMessage;    

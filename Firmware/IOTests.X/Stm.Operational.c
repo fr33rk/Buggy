@@ -11,6 +11,7 @@
 
 #include "MessageFIFOBuffer.h"
 #include "BuggyMessage.h"
+#include "BuggyMemory.h"
 
 // Add global variables here.
 extern bool Button1Clicked;
@@ -28,7 +29,9 @@ typedef enum _OPERATIONAL_STATE
 static enmOperationalState mCurrentState;
 
 // Add function prototypes here.
-
+void static ProcessCommand();
+void ProcessVersionRequest();
+void ProcessSensorRequest();
 
 /**
 * The state machine when the module is in measure mode.
@@ -47,6 +50,11 @@ bool OperationalStateMachine(void)
     
     MessageFIFOElement element;
     
+    if (BuggyMemory.pLastMessage != NULL)
+    {
+        ProcessCommand();
+    }
+    
     switch(mCurrentState)
     {
         case Idle:
@@ -61,7 +69,8 @@ bool OperationalStateMachine(void)
             return true;
         case SendingMessage:
             if (IsTimerExpired(0))
-            {            
+            {      
+                /*
                 BuggyMessage message;
                 CreateVersionMessage(&message);
                 SendBuffer(message.AsBuffer, 12);
@@ -84,7 +93,23 @@ bool OperationalStateMachine(void)
                 testBuffer[6] = HIGH_BYTE(sensorVal);
                 testBuffer[7] = LOW_BYTE(sensorVal);
 
-                SendBuffer(testBuffer, 8);
+                SendBuffer(testBuffer, 8);*/
+
+#ifdef SIMULATED                
+                strcpy(element.data, "+IPD,0,12:0C0200040100");
+                UartInMessageBuffer.Add(&UartInMessageBuffer, &element);
+#else
+                if (BuggyMemory.SendSensorUpdates)
+                {
+                    BuggyMessage message;
+                    CreateSensorResultMessage(&message, 
+                            BuggyMemory.SensorSelected, 
+                            GetLastReading(BuggyMemory.SensorSelected),
+                            BuggyMemory.SendSensorUpdatesTaskId);
+                    SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);                
+                }
+#endif
+                
                 ResetTimer(0);
                 mCurrentState = Start;
             }
@@ -121,3 +146,55 @@ bool StartOperationalStateMachine()
     return false;
 }
 
+void static ProcessCommand()
+{
+    switch (BuggyMemory.pLastMessage->Command)
+    {
+        case cmdVersionReq:
+            ProcessVersionRequest();
+            break;
+        case cmdSensorReq:
+            ProcessSensorRequest();
+            break;
+    }
+    
+    BuggyMemory.pLastMessage = NULL;
+}
+
+void ProcessVersionRequest()
+{
+    if ((BuggyMemory.pLastMessage->RTR) 
+        && (BuggyMemory.pLastMessage->DataSize == 0))
+    {
+        BuggyMessage message;
+        CreateVersionMessage(&message, BuggyMemory.pLastMessage->TaskId);
+        SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);                
+    }
+}
+void ProcessSensorRequest()
+{
+    // 0 : Sensor
+    // 1 : Continues (true/false)
+    
+    if ((!BuggyMemory.pLastMessage->RTR) 
+        && (BuggyMemory.pLastMessage->DataSize == 2))
+    {
+        BuggyMemory.SensorSelected = BuggyMemory.pLastMessage->Data[0];
+        
+        BuggyMemory.SendSensorUpdates = BuggyMemory.pLastMessage->Data[1];
+        
+        if (BuggyMemory.pLastMessage->Data[1])
+        {
+            BuggyMemory.SendSensorUpdatesTaskId = BuggyMemory.pLastMessage->TaskId;
+        }   
+        else
+        {
+            BuggyMessage message;
+            CreateSensorResultMessage(&message, 
+                    BuggyMemory.SensorSelected, 
+                    GetLastReading(BuggyMemory.SensorSelected),
+                    BuggyMemory.pLastMessage->TaskId);
+            SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);
+        }
+    }    
+}

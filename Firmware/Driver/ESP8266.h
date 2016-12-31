@@ -10,7 +10,7 @@
 
 #include "Types.h"
 
-typedef void (*OnReceivedData)(void)(const uint8_t *);
+typedef void (*OnReceivedData)(const uint8_t *);
 
 bool InitializeEspStateMachine();
 
