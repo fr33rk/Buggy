@@ -99,6 +99,11 @@ bool InitializeBuggy()
     RCONbits.IPEN = 1;    // Enable priority levels on interrupts
  
     memset(&BuggyMemory, 0, sizeof(BuggyMemory_T));
+    
+    // Save the reason why the buggy has been reset. This is found
+    // in either the last 2 bits of STKPTR or first 5 bits of RCON.
+    BuggyMemory.ResetReason = (STKPTR & 0xC0) | (RCON & 0x1F);
+    
     InitializeLeds();
     InitCounters();
     InitMainTimer();
@@ -121,6 +126,9 @@ bool InitializeBuggy()
     // Enable interrupts
     INTCONbits.GIEL = 1;  // Enable low priority interrupts
     INTCONbits.GIEH = 1;  // Enable high priority interrupts
+    
+    // Reset reset flags
+    RCON |= 0x1F;
     
     return true;
 }

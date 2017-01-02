@@ -37,6 +37,7 @@ typedef union
 } BuggyMessage;
 
 void CreateVersionMessage(BuggyMessage *pmessage, uint16_t taskId);
+void CreateResetDoneMessage(BuggyMessage *pMessage);
 void CreateSensorResultMessage(BuggyMessage *pMessage, AnalogSensor sensor, uint16_t value, uint16_t taskId);
 
 void ReceiveMessage(const uint8_t *message);

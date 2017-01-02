@@ -37,10 +37,16 @@ void CreateVersionMessage(BuggyMessage *pMessage, uint16_t taskId)
     pMessage->Data[2] = 0;//BUILD;
 }
 
+/**
+ * Create a reset done message.
+ * @param pMessage, pointer to the message that is populated.
+ */
 void CreateResetDoneMessage(BuggyMessage *pMessage)
 {
     pMessage->Command = cmdResetDone;
-    pMessage->DataSize = 0;
+    pMessage->DataSize = 1;
+    
+    pMessage->Data[0] = BuggyMemory.ResetReason;
 }
 
 /**

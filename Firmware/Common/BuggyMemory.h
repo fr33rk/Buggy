@@ -15,6 +15,7 @@
 
 typedef struct BUGGY_MEMORY
 {
+    uint8_t ResetReason;
     bool IsInError;
     ErrorCode ErrorCode;
     AnalogSensor SensorSelected;
