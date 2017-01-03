@@ -102,9 +102,9 @@ void CreateSteerMotorDoneMessage(BuggyMessage *pMessage)
     pMessage->DataSize = 0;
 }
 
-void CreateSendErrorMessage(BuggyMessage *pMessage, ErrorCode errorCode)
+void CreateSendErrorMessage(BuggyMessage *pMessage)
 {
-    pMessage->Command = cmdSendError;
+    InitMessage(pMessage, cmdSendError, 0);
     pMessage->DataSize = 1;
-    pMessage->Data[0] = errorCode;
+    pMessage->Data[0] = BuggyMemory.ErrorCode;
 }
