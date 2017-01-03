@@ -4,6 +4,7 @@
 #include "Uart.h"
 #include "LEDs.h"
 #include "Counters.h"
+#include "BuggyMemory.h"
 
 #define MAX_CONNECTIONS 5
 
@@ -446,7 +447,7 @@ void ProcessIncommingCommand(const char *message)
 
         if (datasize % 2 != 0)
         {
-#warning Raise an error.
+            InError(errInvalidMessageSize);
         }
         else if (datasize > 0)
         {
@@ -503,4 +504,9 @@ bool RequestSend()
 uint8_t GetIpAddress()
 {
     return mIpAddress;
+}
+
+bool IsConnected()
+{
+   return mConnections > 0;   
 }

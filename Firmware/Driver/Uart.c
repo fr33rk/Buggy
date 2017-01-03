@@ -122,7 +122,7 @@ void UartSendString(const char* text)
     }
     else
     {
-#warning Implement Error overflow
+        InError(errRxFifoBufferOverflow);
     }
 #endif        
     

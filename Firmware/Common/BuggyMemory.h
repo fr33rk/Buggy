@@ -30,5 +30,7 @@ BuggyMemory_T BuggyMemory;
 
 void StoreBuggyMessage(uint8_t message);
 
+void InError(ErrorCode errorCode);
+
 #endif	/* BUGGYMEMORY_H */
 

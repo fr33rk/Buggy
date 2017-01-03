@@ -25,7 +25,8 @@ typedef enum COMMANDID
 
 typedef enum ERROR_CODES
 {
-    errRxFifoBufferOverflow = 0x01,        
+    errRxFifoBufferOverflow = 0x01,      
+    errInvalidMessageSize = 0x02,            
 } ErrorCode;
 
 #endif	/* BUGGYCOMMANDS_H */

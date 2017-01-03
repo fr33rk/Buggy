@@ -38,6 +38,7 @@
         <itemPath>../Common/MessageFIFOBuffer.c</itemPath>
         <itemPath>../Common/Counters.c</itemPath>
         <itemPath>../Common/BuggyMessage.c</itemPath>
+        <itemPath>../Common/BuggyMemory.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="Driver" projectFiles="true">
         <itemPath>../Driver/LEDs.c</itemPath>

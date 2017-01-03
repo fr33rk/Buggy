@@ -36,7 +36,6 @@ typedef struct
     MessageFIFOElement*(*AddRaw)(volatile void *, const void *message, const int size);
     void (*Add)(volatile void *, const MessageFIFOElement *message);
     MessageFIFOElement (*GetNext) (volatile void *);
-    MessageFIFOElement* (*Peek) (volatile void *);
     bool (*HasDataAvailable)(volatile void *);
     bool (*HasSpaceAvailable)(volatile void *);        
 } MessageFIFOBuffer;

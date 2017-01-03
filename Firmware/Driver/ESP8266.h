@@ -24,6 +24,8 @@ void SendMessage(const char *message);
 
 void SendBuffer(const uint8_t *buffer, const uint8_t size);
 
+bool IsConnected();
+
 uint8_t GetIpAddress();
 
 #endif	/* ESP8266_H */

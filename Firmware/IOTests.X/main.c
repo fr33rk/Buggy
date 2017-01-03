@@ -16,6 +16,7 @@
 #include "Stm.Operational.h"
 #include "AnalogSensors.h"
 #include "DigitalSensors.h"
+#include "BuggyMemory.h"
 
 // Add global variables here.
 extern MessageFIFOBuffer UartInMessageBuffer;
@@ -64,10 +65,14 @@ void main(void)
     {
         if (mMainState >= Operational)
         {
-            OperationalEspStateMachine();
+            if (BuggyMemory.IsInError)
+            {
+                mMainState = Error;
+            }
+            // ESP operation should (try) to continue in order to send 
+            // error messages.
+            OperationalEspStateMachine();                       
         }
-        
-        
         
         switch (mMainState)
         {

@@ -21,6 +21,9 @@ extern MessageFIFOBuffer UartInMessageBuffer;
 typedef enum _OPERATIONAL_STATE
 {
     Idle,
+    WaitingOnConnection,
+    ReportingVersion,
+    ReportingResetReason,
     Start,
     SendingMessage,
     Finalize,
@@ -40,6 +43,7 @@ void ProcessSensorRequest();
 bool OperationalStateMachine(void)
 {
     static bool isShowingIp = false;
+    BuggyMessage message;
     
     if (Button1Clicked)
     {
@@ -59,6 +63,25 @@ bool OperationalStateMachine(void)
     {
         case Idle:
             return false;
+        case WaitingOnConnection:
+            if (IsConnected())
+            {
+                mCurrentState = ReportingVersion;
+            }
+            return true;
+            
+        case ReportingVersion:
+            CreateVersionMessage(&message, 0);
+            SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);
+            mCurrentState = ReportingResetReason;
+            return true;
+            
+        case ReportingResetReason:
+            CreateResetDoneMessage(&message);
+            SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);
+            mCurrentState = Start;
+            return true;
+            
         case Start:
 #ifdef SIMULATED
             SetTimer(0, 1);
@@ -101,7 +124,6 @@ bool OperationalStateMachine(void)
 #else
                 if (BuggyMemory.SendSensorUpdates)
                 {
-                    BuggyMessage message;
                     CreateSensorResultMessage(&message, 
                             BuggyMemory.SensorSelected, 
                             GetLastReading(BuggyMemory.SensorSelected),
@@ -139,7 +161,7 @@ bool StartOperationalStateMachine()
 {
     if(mCurrentState == Idle)
     {
-        mCurrentState = Start;
+        mCurrentState = WaitingOnConnection;
         return true;
     }
     //Busy
