@@ -3,8 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL.BuggySoft.Business", "PL.BuggySoft.Business\PL.BuggySoft.Business.csproj", "{6AE4EEE7-0885-4D10-A28F-7360373DD895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL.Logger", "..\PL.Common\Logger\PL.Logger.csproj", "{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{4D7B5467-FDDD-40A1-8212-F984F9E1671B}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AE4EEE7-0885-4D10-A28F-7360373DD895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AE4EEE7-0885-4D10-A28F-7360373DD895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AE4EEE7-0885-4D10-A28F-7360373DD895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AE4EEE7-0885-4D10-A28F-7360373DD895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906} = {4D7B5467-FDDD-40A1-8212-F984F9E1671B}
 	EndGlobalSection
 EndGlobal
