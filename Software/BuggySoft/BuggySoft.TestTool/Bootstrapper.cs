@@ -30,7 +30,7 @@ namespace BuggySoft.TestTool
 		{
 			base.ConfigureModuleCatalog();
 
-			AddModuleToCatalog(typeof(PL.BuggySoft.Business.ModuleInit), ModuleCatalog);
+			//AddModuleToCatalog(typeof(PL.BuggySoft.Business.ModuleInit), ModuleCatalog);
 
 		}
 
