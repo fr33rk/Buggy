@@ -20,16 +20,24 @@ namespace PL.BuggySoft.Business
 		public void Initialize()
 		{
 			mContainer.RegisterType<ILogFile, LogFile>("GeneralLog", new ContainerControlledLifetimeManager(),
-				new InjectionConstructor("BuggySoft.log"));
+				new InjectionConstructor("BuggySoft"));
 
 			mContainer.RegisterType<ILogFile, LogFile>("ComLog", new ContainerControlledLifetimeManager(),
-				new InjectionConstructor("Communication.log"));
+				new InjectionConstructor("Communication"));
 
 			mContainer.RegisterType<IFileSystemService, FileSystemService>(new ContainerControlledLifetimeManager());
 
-			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager());
+			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(
+				mContainer.Resolve<IFileSystemService>(),
+				mContainer.Resolve<ILogFile>("ComLog")
+				));
 
 			mContainer.RegisterType<ISender, Sender>(new ContainerControlledLifetimeManager());
+
+			var settingsService = mContainer.Resolve<IBuggySoftSettingsService>();
+			var comLog = mContainer.Resolve<ILogFile>("ComLog");
+
+			var buggyConnection = new Sender(comLog, settingsService.Settings.IpAddress, settingsService.Settings.IpPort, 5000);
 		}
 	}
 }
