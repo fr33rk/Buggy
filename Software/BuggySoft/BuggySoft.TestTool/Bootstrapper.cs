@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Practices.Prism.Modularity;
-using Microsoft.Practices.Prism.UnityExtensions;
+using Prism.Modularity;
+using Prism.Unity;
 
 namespace BuggySoft.TestTool
 {
-    public class Bootstrapper : UnityBootstrapper
+	public class Bootstrapper : UnityBootstrapper
 	{
 		/// <summary>Initializes the shell.
 		/// </summary>
@@ -30,8 +26,7 @@ namespace BuggySoft.TestTool
 		{
 			base.ConfigureModuleCatalog();
 
-			//AddModuleToCatalog(typeof(PL.BuggySoft.Business.ModuleInit), ModuleCatalog);
-
+			AddModuleToCatalog(typeof(PL.BuggySoft.Business.ModuleInit), ModuleCatalog);
 		}
 
 		/// <summary>Adds the module to catalog with an unique name (AssemblyQualifiedName).</summary>
