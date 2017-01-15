@@ -40,6 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Messages\BaseBuggyMessageWrapper.cs" />
+    <Compile Include="Models\BuggyCommand.cs" />
+    <Compile Include="Models\Messages\BuggyMessageFactory.cs" />
+    <Compile Include="Models\Messages\ResetDoneMessageWrapper.cs" />
+    <Compile Include="Models\Messages\VersionMessageWrapper.cs" />
+    <Compile Include="Models\Messages\VersionRequestMessageWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IBuggySoftSettingsService.cs" />
     <Compile Include="Settings\BuggySoftSettings.cs" />

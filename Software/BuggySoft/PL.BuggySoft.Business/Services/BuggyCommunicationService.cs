@@ -34,8 +34,6 @@ namespace PL.BuggySoft.Business.Services
 			throw new NotImplementedException();
 		}
 
-
-
 		public void Connect()
 		{
 			mSender?.Start();

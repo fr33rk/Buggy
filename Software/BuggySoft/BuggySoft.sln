@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL.Common.Settings", "..\PL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuggySoft.TestTool", "BuggySoft.TestTool\BuggySoft.TestTool.csproj", "{9C43C2FC-60A6-4EE6-BD63-9E6ED9C2FCB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL.BuggySoft.Infrastructure.Tests", "PL.BuggySoft.Infrastructure.Tests\PL.BuggySoft.Infrastructure.Tests.csproj", "{B9890686-9824-4CD2-B1BC-D25D4D9ED01D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{9C43C2FC-60A6-4EE6-BD63-9E6ED9C2FCB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C43C2FC-60A6-4EE6-BD63-9E6ED9C2FCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C43C2FC-60A6-4EE6-BD63-9E6ED9C2FCB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9890686-9824-4CD2-B1BC-D25D4D9ED01D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9890686-9824-4CD2-B1BC-D25D4D9ED01D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9890686-9824-4CD2-B1BC-D25D4D9ED01D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9890686-9824-4CD2-B1BC-D25D4D9ED01D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +64,6 @@ Global
 		{5BA0485D-819F-40A3-AC95-7DC7B4E902F3} = {4D7B5467-FDDD-40A1-8212-F984F9E1671B}
 		{55C3205C-5DE8-4A10-900C-BA5FBBC8ED06} = {94BDF97D-9216-41FC-827E-2CD868F4D6F3}
 		{6576716B-89AA-44CB-A666-50F97C8D3840} = {4D7B5467-FDDD-40A1-8212-F984F9E1671B}
+		{B9890686-9824-4CD2-B1BC-D25D4D9ED01D} = {94BDF97D-9216-41FC-827E-2CD868F4D6F3}
 	EndGlobalSection
 EndGlobal
