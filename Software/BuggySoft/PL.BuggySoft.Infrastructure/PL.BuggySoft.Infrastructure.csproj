@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\PL.BuggySoft.Infrastructure.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +46,9 @@
     <Compile Include="Models\BuggyCommand.cs" />
     <Compile Include="Models\Messages\BuggyMessageFactory.cs" />
     <Compile Include="Models\Messages\ResetDoneMessageWrapper.cs" />
+    <Compile Include="Models\Messages\ResetMessageWrapper.cs" />
+    <Compile Include="Models\Messages\SensorRequestMessageWrapper.cs" />
+    <Compile Include="Models\Messages\SensorResultMessageWrapper.cs" />
     <Compile Include="Models\Messages\VersionMessageWrapper.cs" />
     <Compile Include="Models\Messages\VersionRequestMessageWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

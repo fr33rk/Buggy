@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using PL.BuggySoft.Infrastructure.Models;
 using PL.BuggySoft.Infrastructure.Models.Messages;
 
 namespace PL.BuggySoft.Infrastructure.Tests
@@ -12,7 +13,7 @@ namespace PL.BuggySoft.Infrastructure.Tests
 		public void BuggyMessage_BasePropertiesFromBuffer_CorrectConversion()
 		{
 			// Arrange
-			var rawData = new byte[15] { 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			var rawData = new byte[] { 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 			// Act
 			var unitUnderTest = new BaseBuggyMessageWrapper(rawData);
@@ -29,7 +30,7 @@ namespace PL.BuggySoft.Infrastructure.Tests
 		public void BuggyMessage_DataPropertiesFromBuffer_CorrectConversion()
 		{
 			// Arrange
-			var rawData = new byte[15] { 0x06, 0x01, 0x00, 0x07, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			var rawData = new byte[] { 0x06, 0x01, 0x00, 0x07, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 			// Act
 			var unitUnderTest = new BaseBuggyMessageWrapper(rawData);
@@ -47,7 +48,7 @@ namespace PL.BuggySoft.Infrastructure.Tests
 		public void BuggyMessage_BasePropertiesToBuffer_CorrectBuffer()
 		{
 			// Arrange
-			var unitUnderTest = new BaseBuggyMessageWrapper(BuggyCommand.VersionReq, true, 21, false, 0);
+			var unitUnderTest = new BaseBuggyMessageWrapper(BuggyCommand.VersionReq, true, 21, 0);
 
 			// Assert
 			Assert.That(unitUnderTest.ToRawMessage(), Is.EquivalentTo(new byte[] { 0x05, 0x00, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }));
@@ -57,17 +58,19 @@ namespace PL.BuggySoft.Infrastructure.Tests
 		public void BuggyMessage_DataPropertiesToBuffer_CorrectBuffer()
 		{
 			// Arrange
-			var unitUnderTest = new BaseBuggyMessageWrapper(BuggyCommand.Version, false, 21, true, 3);
+			var rawMessage = new byte[]
+				{0x06, 0x00, 0x15, 0x07, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+			var unitUnderTest = new BaseBuggyMessageWrapper(rawMessage);
 
 			// Assert
-			Assert.That(unitUnderTest.ToRawMessage(), Is.EquivalentTo(new byte[] { 0x06, 0x00, 0x15, 0x07, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }));
+			Assert.That(unitUnderTest.ToRawMessage(), Is.EquivalentTo(rawMessage));
 		}
 
 		[Test]
 		public void BuggyMessage_BasePropertiesTostring()
 		{
 			// Arrange
-			var unitUnderTest = new BaseBuggyMessageWrapper(BuggyCommand.VersionReq, true, 2109, false, 0);
+			var unitUnderTest = new BaseBuggyMessageWrapper(BuggyCommand.VersionReq, true, 2109, 0);
 
 			// Assert
 			Assert.That(unitUnderTest.ToString(), Is.EqualTo("Task ID: 2109, Command: VersionReq, RTR: True, Error: False, Size: 0, Data: []"));

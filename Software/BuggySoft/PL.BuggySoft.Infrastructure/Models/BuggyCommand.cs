@@ -1,7 +1,11 @@
-namespace PL.BuggySoft.Infrastructure.Models.Messages
+namespace PL.BuggySoft.Infrastructure.Models
 {
+	/// <summary>Commands issued to and send by the buggy.
+	/// 
+	/// </summary>
 	public enum BuggyCommand
 	{
+#pragma warning disable 1591
 		Unknown = 0x00,
 		VersionReq = 0x02,
 		Version = 0x03,
@@ -12,5 +16,6 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		SteerMotor = 0x08,
 		SteerMotorDone = 0x09,
 		SendError = 0x0A
+#pragma warning restore 1591
 	}
 }

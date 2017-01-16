@@ -35,13 +35,13 @@ namespace BuggySoft.TestTool
 		/// Otherwise ModuleInit has to be named differently in each module.
 		private void AddModuleToCatalog(Type moduleType, IModuleCatalog catalog)
 		{
-			var NewModuleInfo = new ModuleInfo
+			var newModuleInfo = new ModuleInfo
 			{
 				ModuleName = moduleType.AssemblyQualifiedName,
 				ModuleType = moduleType.AssemblyQualifiedName,
 				InitializationMode = InitializationMode.WhenAvailable
 			};
-			catalog.AddModule(NewModuleInfo);
+			catalog.AddModule(newModuleInfo);
 		}
 	}
 }
