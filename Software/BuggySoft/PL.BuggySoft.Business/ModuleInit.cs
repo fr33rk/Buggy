@@ -35,9 +35,13 @@ namespace PL.BuggySoft.Business
 			mContainer.RegisterType<ISender, Sender>(new ContainerControlledLifetimeManager());
 
 			var settingsService = mContainer.Resolve<IBuggySoftSettingsService>();
-			var comLog = mContainer.Resolve<ILogFile>("ComLog");
+			
+			var buggyConnection = new Sender(mContainer.Resolve<ILogFile>("ComLog"), 
+				settingsService.Settings.IpAddress, 
+				settingsService.Settings.IpPort, 5000);
 
-			var buggyConnection = new Sender(comLog, settingsService.Settings.IpAddress, settingsService.Settings.IpPort, 5000);
+			mContainer.RegisterType<IBuggyCommunicationService, IBuggyCommunicationService>(
+				new ContainerControlledLifetimeManager());
 		}
 	}
 }

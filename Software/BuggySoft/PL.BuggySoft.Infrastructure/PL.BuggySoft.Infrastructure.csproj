@@ -52,6 +52,7 @@
     <Compile Include="Models\Messages\VersionMessageWrapper.cs" />
     <Compile Include="Models\Messages\VersionRequestMessageWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IBuggyCommunicationService.cs" />
     <Compile Include="Services\IBuggySoftSettingsService.cs" />
     <Compile Include="Settings\BuggySoftSettings.cs" />
     <Compile Include="Settings\BuggySoftSettingsService.cs" />

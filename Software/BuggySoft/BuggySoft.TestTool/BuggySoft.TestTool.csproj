@@ -95,6 +95,9 @@
     <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -135,10 +138,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
-    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

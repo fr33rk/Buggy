@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PL.BuggySoft.Infrastructure.Models.Messages
 {
-	static class BuggyMessageFactory
+	public static class BuggyMessageFactory
 	{
-		static BaseBuggyMessageWrapper CreateWrapperForRawMessage(byte[] rawMessage)
+		public static BaseBuggyMessageWrapper CreateWrapperForRawMessage(byte[] rawMessage)
 		{
 			var baseMessage = new BaseBuggyMessageWrapper(rawMessage);
 
