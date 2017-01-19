@@ -13,8 +13,9 @@ namespace PL.BuggySoft.Business.Services
 	{
 		#region Definitions
 
-		private readonly ISender mSender;
+		private ISender mSender;
 		private readonly ILogFile mComLogFile;
+		private ushort mTaskId = 0;
 
 		#endregion Definitions
 
@@ -24,13 +25,8 @@ namespace PL.BuggySoft.Business.Services
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="comLogFile">The COM log file.</param>
-		public BuggyCommunicationService(ISender sender, ILogFile comLogFile)
+		public BuggyCommunicationService(ILogFile comLogFile)
 		{
-			mSender = sender;
-			mSender.OnConnect += SenderOnOnConnect;
-			mSender.OnDataReceived += SenderOnOnDataReceived;
-			mSender.OnDisconnect += SenderOnOnDisconnect;
-
 			mComLogFile = comLogFile;
 		}
 
@@ -38,14 +34,23 @@ namespace PL.BuggySoft.Business.Services
 
 		#region Sender events
 
+		protected virtual ISender CreateSender(string ip, int port)
+		{
+			var retValue = new Sender(mComLogFile, ip, port, 5000);
+
+			return retValue;
+		}
+
 		private void SenderOnOnDisconnect(object sender, EventArgs eventArgs)
 		{
 			mComLogFile?.Info("Connected.");
+			Disconnected?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void SenderOnOnConnect(object sender, EventArgs eventArgs)
 		{
 			mComLogFile?.Info("Disconnected.");
+			Connected?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void SenderOnOnDataReceived(object sender, SocketDataReceivedEventArgs socketDataReceivedEventArgs)
@@ -61,6 +66,12 @@ namespace PL.BuggySoft.Business.Services
 			if (message != null)
 			{
 				mComLogFile?.Info($"< {message}");
+				MessageReceived?.Invoke(this, new MessageReceivedEventArgs<BaseBuggyMessageWrapper>(message));
+
+				if (message is VersionMessageWrapper)
+				{
+					VersionMessageReceived?.Invoke(this, new MessageReceivedEventArgs<VersionMessageWrapper>(message as VersionMessageWrapper));
+				}
 			}
 			else
 			{
@@ -68,15 +79,36 @@ namespace PL.BuggySoft.Business.Services
 			}
 		}
 
+		private void SendMessage(byte[] rawMessage)
+		{
+			mSender.WriteAsync(BitConverter.ToString(rawMessage).Replace("-", string.Empty));
+		}
+
 		#endregion Sender events
 
 		#region Public methods
 
-		/// <summary>Start attempting to connect to the Buggy.</summary>
-		public void Connect()
+		public void Connect(string ip, int port)
 		{
+			mSender = CreateSender(ip, port);
+			mSender.OnConnect += SenderOnOnConnect;
+			mSender.OnDataReceived += SenderOnOnDataReceived;
+			mSender.OnDisconnect += SenderOnOnDisconnect;
 			mSender?.Start();
 		}
+
+		public void RequestVersion()
+		{
+			SendMessage(new VersionRequestMessageWrapper(++mTaskId).ToRawMessage());
+		}
+
+		public event EventHandler Connected;
+
+		public event EventHandler Disconnected;
+
+		public event EventHandler<MessageReceivedEventArgs<BaseBuggyMessageWrapper>> MessageReceived;
+
+		public event EventHandler<MessageReceivedEventArgs<VersionMessageWrapper>> VersionMessageReceived;
 
 		#endregion Public methods
 	}

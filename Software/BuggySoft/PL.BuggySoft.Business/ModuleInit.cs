@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using PL.BuggySoft.Business.Services;
 using PL.BuggySoft.Infrastructure.Services;
 using PL.BuggySoft.Infrastructure.Settings;
 using PL.Common.Settings;
@@ -27,20 +28,13 @@ namespace PL.BuggySoft.Business
 
 			mContainer.RegisterType<IFileSystemService, FileSystemService>(new ContainerControlledLifetimeManager());
 
-			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(
-				mContainer.Resolve<IFileSystemService>(),
-				mContainer.Resolve<ILogFile>("ComLog")
-				));
+			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager());
+			//, new InjectionConstructor(
+			//	mContainer.Resolve<IFileSystemService>(),
+			//	mContainer.Resolve<ILogFile>("ComLog")
+			//	));
 
-			mContainer.RegisterType<ISender, Sender>(new ContainerControlledLifetimeManager());
-
-			var settingsService = mContainer.Resolve<IBuggySoftSettingsService>();
-			
-			var buggyConnection = new Sender(mContainer.Resolve<ILogFile>("ComLog"), 
-				settingsService.Settings.IpAddress, 
-				settingsService.Settings.IpPort, 5000);
-
-			mContainer.RegisterType<IBuggyCommunicationService, IBuggyCommunicationService>(
+			mContainer.RegisterType<IBuggyCommunicationService, BuggyCommunicationService>(
 				new ContainerControlledLifetimeManager());
 		}
 	}

@@ -27,6 +27,7 @@ namespace BuggySoft.TestTool
 			base.ConfigureModuleCatalog();
 
 			AddModuleToCatalog(typeof(PL.BuggySoft.Business.ModuleInit), ModuleCatalog);
+			AddModuleToCatalog(typeof(ModuleInit), ModuleCatalog);
 		}
 
 		/// <summary>Adds the module to catalog with an unique name (AssemblyQualifiedName).</summary>

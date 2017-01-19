@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BuggySoft.TestTool.ViewModels;
 
 namespace BuggySoft.TestTool.Views
 {
@@ -20,9 +21,10 @@ namespace BuggySoft.TestTool.Views
 	/// </summary>
 	public partial class MainView : UserControl
 	{
-		public MainView()
+		public MainView(MainVm mainVm)
 		{
 			InitializeComponent();
+			DataContext = mainVm;
 		}
 	}
 }
