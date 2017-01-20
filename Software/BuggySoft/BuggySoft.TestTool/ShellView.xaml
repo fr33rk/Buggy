@@ -8,6 +8,9 @@
         mc:Ignorable="d"
         Title="ShellView" Height="300" Width="300">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <ContentControl x:Name="MainRegion"
                         Grid.Row="0"
                         prism:RegionManager.RegionName="MainRegion" />

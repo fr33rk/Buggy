@@ -28,14 +28,16 @@ namespace PL.BuggySoft.Business
 
 			mContainer.RegisterType<IFileSystemService, FileSystemService>(new ContainerControlledLifetimeManager());
 
-			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager());
-			//, new InjectionConstructor(
-			//	mContainer.Resolve<IFileSystemService>(),
-			//	mContainer.Resolve<ILogFile>("ComLog")
-			//	));
+			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager()
+			, new InjectionFactory(c => new BuggySoftSettingsService(
+				mContainer.Resolve<IFileSystemService>(),
+				mContainer.Resolve<ILogFile>("ComLog"))
+			));
 
 			mContainer.RegisterType<IBuggyCommunicationService, BuggyCommunicationService>(
-				new ContainerControlledLifetimeManager());
+				new ContainerControlledLifetimeManager()
+				, new InjectionFactory(c => new BuggyCommunicationService(mContainer.Resolve<ILogFile>("GeneralLog")))
+			);
 		}
 	}
 }

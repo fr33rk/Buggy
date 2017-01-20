@@ -1,4 +1,5 @@
-﻿using BuggySoft.TestTool.Views;
+﻿using System.Diagnostics;
+using BuggySoft.TestTool.Views;
 using Microsoft.Practices.Unity;
 using PL.BuggySoft.Infrastructure;
 using Prism.Modularity;
@@ -20,8 +21,10 @@ namespace BuggySoft.TestTool
 		public void Initialize()
 		{
 			mContainer.RegisterType<object, MainView>(typeof(MainView).FullName);
-
-			mRegionManager.RequestNavigate(RegionNames.MainRegion, typeof(MainView).FullName);
+			
+			mRegionManager.RequestNavigate(RegionNames.MainRegion, typeof(MainView).FullName, 
+				result => Debug.WriteLine($"{result.Result}, {result.Error}")
+				);			
 		}
 	}
 }
