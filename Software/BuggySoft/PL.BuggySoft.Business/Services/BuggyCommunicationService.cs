@@ -28,6 +28,7 @@ namespace PL.BuggySoft.Business.Services
 		public BuggyCommunicationService(ILogFile comLogFile)
 		{
 			mComLogFile = comLogFile;
+			comLogFile.WriteLogStart();
 		}
 
 		#endregion Constructor(s)

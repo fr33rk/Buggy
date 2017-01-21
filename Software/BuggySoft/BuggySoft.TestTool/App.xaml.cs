@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Practices.Unity;
+using PL.Logger;
 
 namespace BuggySoft.TestTool
 {
@@ -13,6 +15,8 @@ namespace BuggySoft.TestTool
 	/// </summary>
 	public partial class App : Application
 	{
+		private static Bootstrapper mBootstrapper;
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			StartInstance(e);
@@ -25,8 +29,18 @@ namespace BuggySoft.TestTool
 				new System.Globalization.CultureInfo("en");
 
 			// Configure Bootstrapper
-			var bootstrapper = new Bootstrapper();
-			bootstrapper.Run();
+			mBootstrapper = new Bootstrapper();
+			mBootstrapper.Run();			
+		}
+
+		protected override void OnExit(ExitEventArgs e)
+		{
+			var logFiles = mBootstrapper.Container.ResolveAll(typeof(ILogFile)).OfType<ILogFile>();
+
+			foreach (var logFile in logFiles)
+			{
+				logFile.WriteLogEnd();
+			}			
 		}
 	}
 }

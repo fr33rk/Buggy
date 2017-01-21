@@ -2,6 +2,7 @@
 using BuggySoft.TestTool.Views;
 using Microsoft.Practices.Unity;
 using PL.BuggySoft.Infrastructure;
+using PL.Logger;
 using Prism.Modularity;
 using Prism.Regions;
 
@@ -22,9 +23,12 @@ namespace BuggySoft.TestTool
 		{
 			mContainer.RegisterType<object, MainView>(typeof(MainView).FullName);
 			
-			mRegionManager.RequestNavigate(RegionNames.MainRegion, typeof(MainView).FullName, 
-				result => Debug.WriteLine($"{result.Result}, {result.Error}")
-				);			
-		}
+			mRegionManager.RequestNavigate(RegionNames.MainRegion, typeof(MainView).FullName,
+				result =>
+				{
+					if (result.Result == false)
+						mContainer.Resolve<ILogFile>("GeneralLog").Error(result.Error.ToString());
+				});			
+		}		
 	}
 }

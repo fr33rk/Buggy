@@ -23,6 +23,8 @@ namespace PL.BuggySoft.Business
 			mContainer.RegisterType<ILogFile, LogFile>("GeneralLog", new ContainerControlledLifetimeManager(),
 				new InjectionConstructor("BuggySoft"));
 
+			mContainer.Resolve<ILogFile>("GeneralLog").WriteLogStart();
+
 			mContainer.RegisterType<ILogFile, LogFile>("ComLog", new ContainerControlledLifetimeManager(),
 				new InjectionConstructor("Communication"));
 
@@ -31,12 +33,12 @@ namespace PL.BuggySoft.Business
 			mContainer.RegisterType<IBuggySoftSettingsService, BuggySoftSettingsService>(new ContainerControlledLifetimeManager()
 			, new InjectionFactory(c => new BuggySoftSettingsService(
 				mContainer.Resolve<IFileSystemService>(),
-				mContainer.Resolve<ILogFile>("ComLog"))
+				mContainer.Resolve<ILogFile>("GeneralLog"))
 			));
 
 			mContainer.RegisterType<IBuggyCommunicationService, BuggyCommunicationService>(
 				new ContainerControlledLifetimeManager()
-				, new InjectionFactory(c => new BuggyCommunicationService(mContainer.Resolve<ILogFile>("GeneralLog")))
+				, new InjectionFactory(c => new BuggyCommunicationService(mContainer.Resolve<ILogFile>("ComLog")))
 			);
 		}
 	}

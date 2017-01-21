@@ -130,6 +130,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PL.Common\Logger\PL.Logger.csproj">
+      <Project>{EC4D9E5B-B1A1-49EB-A7DB-49FE70E12906}</Project>
+      <Name>PL.Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PL.Common\PL.Common.Prism\PL.Common.Prism.csproj">
       <Project>{87F76E27-EF8D-454E-B87A-257741EB2BD2}</Project>
       <Name>PL.Common.Prism</Name>

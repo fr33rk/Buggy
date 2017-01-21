@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.Windows;
+using PL.Common.Prism;
+using PL.Logger;
+using Prism.Logging;
 using Prism.Modularity;
 using Prism.Unity;
 
@@ -43,6 +47,13 @@ namespace BuggySoft.TestTool
 				InitializationMode = InitializationMode.WhenAvailable
 			};
 			catalog.AddModule(newModuleInfo);
+		}
+
+		protected override ILoggerFacade CreateLogger()
+		{
+			var logFile = new LogFile("Prism");
+			logFile.WriteLogStart();
+			return new PlLoggerFacade(logFile);
 		}
 	}
 }

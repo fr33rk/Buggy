@@ -3,10 +3,14 @@ using PL.BuggySoft.Infrastructure.Models.Messages;
 
 namespace PL.BuggySoft.Infrastructure.Services
 {
+	/// <summary>event arguments for when a message of type T has been received.
+	/// </summary>
+	/// <typeparam name="T">T</typeparam>
+	/// <seealso cref="System.EventArgs" />
 	public class MessageReceivedEventArgs<T> : EventArgs
 		where T : BaseBuggyMessageWrapper
 	{
-		/// <summary>Initializes a new instance of the <see cref="MessageReceivedEventArgs"/> class.
+		/// <summary>Initializes a new instance.
 		/// </summary>
 		/// <param name="message">The message.</param>
 		public MessageReceivedEventArgs(T message)
@@ -14,9 +18,10 @@ namespace PL.BuggySoft.Infrastructure.Services
 			Message = message;
 		}
 
+		/// <summary>The received message.
+		/// </summary>
 		public T Message { get; private set; }
 	}
-
 
 	/// <summary>Interface for a communication service with the buggy.
 	/// </summary>
@@ -35,7 +40,7 @@ namespace PL.BuggySoft.Infrastructure.Services
 
 		/// <summary>Occurs when [disconnected].
 		/// </summary>
-		event EventHandler Disconnected;  
+		event EventHandler Disconnected;
 
 		/// <summary>Occurs when (any) message is received.
 		/// </summary>
