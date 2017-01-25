@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Windows;
 using PL.Common.Prism;
 using PL.Logger;
@@ -17,8 +16,8 @@ namespace BuggySoft.TestTool
 		{
 			base.InitializeShell();
 
-			App.Current.MainWindow = (Window)Shell;
-			App.Current.MainWindow.Show();
+			Application.Current.MainWindow = (Window)Shell;
+			Application.Current.MainWindow.Show();
 		}
 
 		protected override DependencyObject CreateShell()

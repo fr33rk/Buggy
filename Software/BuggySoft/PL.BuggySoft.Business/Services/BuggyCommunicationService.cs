@@ -15,7 +15,7 @@ namespace PL.BuggySoft.Business.Services
 
 		private ISender mSender;
 		private readonly ILogFile mComLogFile;
-		private ushort mTaskId = 0;
+		private ushort mTaskId;
 
 		#endregion Definitions
 
@@ -23,7 +23,6 @@ namespace PL.BuggySoft.Business.Services
 
 		/// <summary>Initializes a new instance of the <see cref="BuggyCommunicationService"/> class.
 		/// </summary>
-		/// <param name="sender">The sender.</param>
 		/// <param name="comLogFile">The COM log file.</param>
 		public BuggyCommunicationService(ILogFile comLogFile)
 		{
@@ -44,20 +43,20 @@ namespace PL.BuggySoft.Business.Services
 
 		private void SenderOnOnDisconnect(object sender, EventArgs eventArgs)
 		{
-			mComLogFile?.Info("Connected.");
+			mComLogFile?.Info("Disconnected.");
 			Disconnected?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void SenderOnOnConnect(object sender, EventArgs eventArgs)
 		{
-			mComLogFile?.Info("Disconnected.");
+			mComLogFile?.Info("Connected.");
 			Connected?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void SenderOnOnDataReceived(object sender, SocketDataReceivedEventArgs socketDataReceivedEventArgs)
 		{
 			// Convert the string containing Hex characters to a byte array.
-			var rawMessage = Enumerable.Range(0, socketDataReceivedEventArgs.Data.Length)
+			var rawMessage = Enumerable.Range(0, socketDataReceivedEventArgs.Data.Length-2)
 				.Where(x => x % 2 == 0)
 				.Select(x => Convert.ToByte(socketDataReceivedEventArgs.Data.Substring(x, 2), 16))
 				.ToArray();

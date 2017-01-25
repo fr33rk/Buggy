@@ -1,6 +1,5 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using PL.BuggySoft.Business.Services;
 using PL.BuggySoft.Infrastructure.Models.Messages;
 using PL.Common.Socket;
@@ -13,7 +12,7 @@ namespace PL.BuggySoft.Business.Tests
 	{
 		public class TestableBuggyCommunicationService : BuggyCommunicationService
 		{
-			private ISender mClient;
+			private readonly ISender mClient;
 
 			public TestableBuggyCommunicationService(ISender stubClient, ILogFile logFile)
 				: base(logFile)
@@ -21,10 +20,9 @@ namespace PL.BuggySoft.Business.Tests
 				mClient = stubClient;
 			}
 
-
 			protected override ISender CreateSender(string ip, int port)
 			{
-				return mClient;				
+				return mClient;
 			}
 		}
 

@@ -5,12 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:BuggySoft.TestTool.Views"
              mc:Ignorable="d"
-             d:DesignHeight="300"
-             d:DesignWidth="300">
+             d:DesignHeight="800"
+             d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style x:Key="PlDefaultButtonStyle"
+               TargetType="Button">
+            <Setter Property="Margin"
+                    Value="4" />
+            <Setter Property="Width"
+                    Value="100" />
+            <Setter Property="Height"
+                    Value="23" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <DataGrid>
             <DataGrid.Columns>
@@ -29,5 +40,40 @@
                                     Header="RTR" />
             </DataGrid.Columns>
         </DataGrid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0"
+                   Grid.Column="0"
+                   Content="IP:" />
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     Text="{Binding IpAddress}"
+                     Width="150"
+                     Margin="4" />
+            <Label Grid.Row="1"
+                   Grid.Column="0"
+                   Content="Port" />
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     HorizontalAlignment="Left"
+                     Text="{Binding Port}"
+                     Width="50"
+                     Margin="4" />
+            <Button Style="{StaticResource PlDefaultButtonStyle}"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Content="Connect"
+                    Command="{Binding ConnectCommand}" />
+        </Grid>
     </Grid>
 </UserControl>

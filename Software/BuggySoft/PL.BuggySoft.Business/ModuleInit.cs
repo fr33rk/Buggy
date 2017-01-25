@@ -3,7 +3,6 @@ using PL.BuggySoft.Business.Services;
 using PL.BuggySoft.Infrastructure.Services;
 using PL.BuggySoft.Infrastructure.Settings;
 using PL.Common.Settings;
-using PL.Common.Socket;
 using PL.Logger;
 using Prism.Modularity;
 
@@ -11,7 +10,7 @@ namespace PL.BuggySoft.Business
 {
 	public class ModuleInit : IModule
 	{
-		private IUnityContainer mContainer;
+		private readonly IUnityContainer mContainer;
 
 		public ModuleInit(IUnityContainer container)
 		{

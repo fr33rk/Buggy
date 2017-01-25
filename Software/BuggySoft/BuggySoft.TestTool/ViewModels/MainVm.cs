@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using PL.BuggySoft.Infrastructure.Models.Messages;
 using PL.BuggySoft.Infrastructure.Services;
 using PL.Common.Prism;
@@ -10,8 +9,8 @@ namespace BuggySoft.TestTool.ViewModels
 {
 	public class MainVm : ViewModelBase, INavigationAware
 	{
-		private IBuggyCommunicationService mComService;
-		private IBuggySoftSettingsService mSettings;
+		private readonly IBuggyCommunicationService mComService;
+		private readonly IBuggySoftSettingsService mSettings;
 
 		public MainVm(IBuggyCommunicationService buggyCommunicationService, IBuggySoftSettingsService settingsService)
 		{
@@ -36,18 +35,12 @@ namespace BuggySoft.TestTool.ViewModels
 		/// <summary>Gets Connect command.
 		/// </summary>
 		[System.ComponentModel.Browsable(false)]
-		public DelegateCommand ConnectCommand
-		{
-			get
-			{
-				return this.mConnectCommand
-					// Reflection is used to call ChangeCanExecute on the command. Therefore, when the command
-					// is not yet bound to the View, the command is instantiated in a different thread than the
-					// main thread. Prevent this by checking on the SynchronizationContext.
-					?? (this.mConnectCommand = System.Threading.SynchronizationContext.Current == null
-					? null : new DelegateCommand(this.Connect, this.CanConnect));
-			}
-		}
+		public DelegateCommand ConnectCommand => mConnectCommand
+			// Reflection is used to call ChangeCanExecute on the command. Therefore, when the command
+			// is not yet bound to the View, the command is instantiated in a different thread than the
+			// main thread. Prevent this by checking on the SynchronizationContext.
+			?? (mConnectCommand = System.Threading.SynchronizationContext.Current == null
+				? null : new DelegateCommand(Connect, CanConnect));
 
 		/// <summary>
 		/// </summary>
@@ -78,7 +71,7 @@ namespace BuggySoft.TestTool.ViewModels
 			//throw new NotImplementedException();
 		}
 
-		#endregion Command ConnectCommand				
-		
+		#endregion Command ConnectCommand
+
 	}
 }

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
-using Microsoft.Practices.Unity;
 using PL.Logger;
 
 namespace BuggySoft.TestTool
@@ -13,7 +7,7 @@ namespace BuggySoft.TestTool
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	public partial class App : Application
+	public partial class App
 	{
 		private static Bootstrapper mBootstrapper;
 
@@ -30,7 +24,7 @@ namespace BuggySoft.TestTool
 
 			// Configure Bootstrapper
 			mBootstrapper = new Bootstrapper();
-			mBootstrapper.Run();			
+			mBootstrapper.Run();
 		}
 
 		protected override void OnExit(ExitEventArgs e)
@@ -40,7 +34,7 @@ namespace BuggySoft.TestTool
 			foreach (var logFile in logFiles)
 			{
 				logFile.WriteLogEnd();
-			}			
+			}
 		}
 	}
 }

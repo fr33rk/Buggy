@@ -6,11 +6,8 @@
         xmlns:local="clr-namespace:BuggySoft.TestTool"
         xmlns:prism="http://www.codeplex.com/prism"
         mc:Ignorable="d"
-        Title="ShellView" Height="300" Width="300">
+        Title="ShellView" Height="800" Width="1024">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
         <ContentControl x:Name="MainRegion"
                         Grid.Row="0"
                         prism:RegionManager.RegionName="MainRegion" />
