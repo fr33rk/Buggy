@@ -45,9 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Messages\AnalogSensor.cs" />
     <Compile Include="Models\Messages\BaseBuggyMessageWrapper.cs" />
     <Compile Include="Models\BuggyCommand.cs" />
     <Compile Include="Models\Messages\BuggyMessageFactory.cs" />
+    <Compile Include="Models\Messages\ErrorRequestMessageWrapper.cs" />
+    <Compile Include="Models\Messages\SteerMotorMessageWrapper.cs" />
     <Compile Include="Models\Messages\ResetDoneMessageWrapper.cs" />
     <Compile Include="Models\Messages\ResetMessageWrapper.cs" />
     <Compile Include="Models\Messages\SensorRequestMessageWrapper.cs" />
