@@ -16,6 +16,11 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 			{
 				case BuggyCommand.Version:
 					return new VersionMessageWrapper(rawMessage);
+				case BuggyCommand.ResetDone:
+					return new ResetDoneMessageWrapper(rawMessage);
+				case BuggyCommand.SensorResult:
+					return new SensorResultMessageWrapper(rawMessage);
+				case BuggyCommand.SteerMotorDone:
 				default:
 					return baseMessage;
 			}

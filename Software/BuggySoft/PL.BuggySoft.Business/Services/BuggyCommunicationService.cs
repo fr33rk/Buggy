@@ -79,9 +79,10 @@ namespace PL.BuggySoft.Business.Services
 			}
 		}
 
-		private void SendMessage(byte[] rawMessage)
+		private void SendMessage(BaseBuggyMessageWrapper message)
 		{
-			mSender.WriteAsync(BitConverter.ToString(rawMessage).Replace("-", string.Empty));
+			mComLogFile?.Info($"> {message}");
+			mSender.WriteAsync(BitConverter.ToString(message.ToRawMessage()).Replace("-", string.Empty));
 		}
 
 		#endregion Sender events
@@ -97,10 +98,29 @@ namespace PL.BuggySoft.Business.Services
 			mSender?.Start();
 		}
 
+		#region Commands
+
 		public void RequestVersion()
 		{
-			SendMessage(new VersionRequestMessageWrapper(++mTaskId).ToRawMessage());
+			SendMessage(new VersionRequestMessageWrapper(++mTaskId));
 		}
+
+		public void SteerMotor(sbyte left, sbyte right)
+		{
+			SendMessage(new SteerMotorMessageWrapper(++mTaskId, left, right));
+		}
+
+		public void RequestSensors(AnalogSensor sensor, bool continues = false)
+		{
+			SendMessage(new SensorRequestMessageWrapper(++mTaskId, sensor, continues));
+		}
+
+		public void GetErrors()
+		{
+			SendMessage(new ErrorRequestMessageWrapper(++mTaskId));
+		}
+
+		#endregion Commands
 
 		public event EventHandler Connected;
 
