@@ -88,7 +88,8 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		{
 			Command = (BuggyCommand)(raw[0] >> 1);
 			IsRtr = (raw[0] & 0x01) == 0x01;
-			TaskId = (ushort)((raw[1] << 8) | (raw[2]));
+			// Task ID is 16 bits and is swapped by firmware.
+			TaskId = (ushort)((raw[2] << 8) | (raw[1]));
 			IsError = (raw[3] & 0x01) == 0x01;
 			DataSize = (byte)((raw[3] >> 1) & 0x03);
 			Data = raw.Skip(4).Take(11).ToArray();

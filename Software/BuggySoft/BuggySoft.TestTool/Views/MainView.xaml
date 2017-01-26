@@ -23,57 +23,79 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <DataGrid>
+        <DataGrid AutoGenerateColumns="False"
+                  ItemsSource="{Binding Messages}">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="*" />
+                <DataGridTextColumn Width="*"
+                                    Binding="{Binding Direction}" />
                 <DataGridTextColumn Width="8*"
-                                    Header="Command" />
+                                    Header="Command"
+                                    Binding="{Binding Command}" />
+                <DataGridTextColumn Width="2*"
+                                    Header="RTR"
+                                    Binding="{Binding Rtr}" />
+                <DataGridTextColumn Width="6*"
+                                    Header="Task ID"
+                                    Binding="{Binding TaskId}" />
                 <DataGridTextColumn Width="8*"
-                                    Header="RTR" />
+                                    Header="Err"
+                                    Binding="{Binding Error}" />
                 <DataGridTextColumn Width="8*"
-                                    Header="Task ID" />
+                                    Header="Data size"
+                                    Binding="{Binding DataSize}" />
                 <DataGridTextColumn Width="8*"
-                                    Header="Err" />
-                <DataGridTextColumn Width="8*"
-                                    Header="Data size" />
-                <DataGridTextColumn Width="8*"
-                                    Header="RTR" />
+                                    Header="Data"
+                                    Binding="{Binding Data}" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-                <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Label Grid.Row="0"
-                   Grid.Column="0"
-                   Content="IP:" />
-            <TextBox Grid.Row="0"
-                     Grid.Column="1"
-                     Text="{Binding IpAddress}"
-                     Width="150"
-                     Margin="4" />
-            <Label Grid.Row="1"
-                   Grid.Column="0"
-                   Content="Port" />
-            <TextBox Grid.Row="1"
-                     Grid.Column="1"
-                     HorizontalAlignment="Left"
-                     Text="{Binding Port}"
-                     Width="50"
-                     Margin="4" />
-            <Button Style="{StaticResource PlDefaultButtonStyle}"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Content="Connect"
-                    Command="{Binding ConnectCommand}" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Content="IP:" />
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         Text="{Binding IpAddress}"
+                         Width="150"
+                         Margin="4" />
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Content="Port" />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         HorizontalAlignment="Left"
+                         Text="{Binding Port}"
+                         Width="50"
+                         Margin="4" />
+                <Button Style="{StaticResource PlDefaultButtonStyle}"
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Content="Connect"
+                        Command="{Binding ConnectCommand}" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button Style="{StaticResource PlDefaultButtonStyle}"
+                        Content="Get version"
+                        Command="{Binding GetVersionCommand}" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

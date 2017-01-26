@@ -83,6 +83,7 @@ namespace PL.BuggySoft.Business.Services
 		{
 			mComLogFile?.Info($"> {message}");
 			mSender.WriteAsync(BitConverter.ToString(message.ToRawMessage()).Replace("-", string.Empty));
+			MessageSend?.Invoke(this, new MessageSendEventArgs(message));
 		}
 
 		#endregion Sender events
@@ -129,6 +130,8 @@ namespace PL.BuggySoft.Business.Services
 		public event EventHandler<MessageReceivedEventArgs<BaseBuggyMessageWrapper>> MessageReceived;
 
 		public event EventHandler<MessageReceivedEventArgs<VersionMessageWrapper>> VersionMessageReceived;
+
+		public event EventHandler<MessageSendEventArgs> MessageSend;
 
 		#endregion Public methods
 	}

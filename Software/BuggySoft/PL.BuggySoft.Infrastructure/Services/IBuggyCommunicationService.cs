@@ -23,6 +23,14 @@ namespace PL.BuggySoft.Infrastructure.Services
 		public T Message { get; private set; }
 	}
 
+	public class MessageSendEventArgs : MessageReceivedEventArgs<BaseBuggyMessageWrapper>
+	{
+		public MessageSendEventArgs(BaseBuggyMessageWrapper message) 
+			: base(message)
+		{
+		}
+	}
+
 	/// <summary>Interface for a communication service with the buggy.
 	/// </summary>
 	public interface IBuggyCommunicationService
@@ -49,5 +57,7 @@ namespace PL.BuggySoft.Infrastructure.Services
 		/// <summary>Occurs when [version message received].
 		/// </summary>
 		event EventHandler<MessageReceivedEventArgs<VersionMessageWrapper>> VersionMessageReceived;
+
+		event EventHandler<MessageSendEventArgs> MessageSend;
 	}
 }
