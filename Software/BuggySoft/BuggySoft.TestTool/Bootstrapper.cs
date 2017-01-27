@@ -48,11 +48,11 @@ namespace BuggySoft.TestTool
 			catalog.AddModule(newModuleInfo);
 		}
 
-		protected override ILoggerFacade CreateLogger()
-		{
-			var logFile = new LogFile("Prism");
-			logFile.WriteLogStart();
-			return new PlLoggerFacade(logFile);
-		}
+		//protected override ILoggerFacade CreateLogger()
+		//{
+		//	//var logFile = new LogFile("Prism");
+		//	//logFile.WriteLogStart();
+		//	//return new PlLoggerFacade(logFile);
+		//}
 	}
 }

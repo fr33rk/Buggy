@@ -22,6 +22,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <DataGrid AutoGenerateColumns="False"
                   ItemsSource="{Binding Messages}">
@@ -48,54 +49,197 @@
                                     Binding="{Binding Data}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Row="0"
-                       Grid.Column="0"
-                       Content="IP:" />
-                <TextBox Grid.Row="0"
-                         Grid.Column="1"
-                         Text="{Binding IpAddress}"
-                         Width="150"
-                         Margin="4" />
-                <Label Grid.Row="1"
-                       Grid.Column="0"
-                       Content="Port" />
-                <TextBox Grid.Row="1"
-                         Grid.Column="1"
-                         HorizontalAlignment="Left"
-                         Text="{Binding Port}"
-                         Width="50"
-                         Margin="4" />
-                <Button Style="{StaticResource PlDefaultButtonStyle}"
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
-                        Content="Connect"
-                        Command="{Binding ConnectCommand}" />
-            </Grid>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Button Style="{StaticResource PlDefaultButtonStyle}"
-                        Content="Get version"
-                        Command="{Binding GetVersionCommand}" />
-            </Grid>
-        </Grid>
+
+        <StackPanel Grid.Column="2"
+                    Orientation="Vertical">
+            <Border BorderThickness="0,1,0,1"
+                    BorderBrush="DarkGray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Content="IP:" />
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             Text="{Binding IpAddress}"
+                             Width="150"
+                             Margin="4" />
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Content="Port" />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             HorizontalAlignment="Left"
+                             Text="{Binding Port}"
+                             Width="50"
+                             Margin="4" />
+                    <Button Style="{StaticResource PlDefaultButtonStyle}"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Content="Connect"
+                            Command="{Binding ConnectCommand}" />
+                </Grid>
+            </Border>
+
+            <Border BorderThickness="0,0,0,1"
+                    BorderBrush="DarkGray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListBox Height="200"
+                             Margin="4"
+                             ItemsSource="{Binding AnalogSensors}"
+                             SelectedItem="{Binding SelectedSensor}">
+                    </ListBox>
+                    <CheckBox Grid.Row="1"
+                              Margin="4"
+                              Content="Send data continues" />
+                    <Button Grid.Row="2"
+                            Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Read sensor(s)"
+                            Command="{Binding GetVersionCommand}" />
+                </Grid>
+            </Border>
+
+            <Border BorderThickness="0,0,0,1"
+                    BorderBrush="DarkGray">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Left" />
+                    <Slider Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="4"
+                            Minimum="-100"
+                            Maximum="100"
+                            Value="{Binding LeftMotorSpeed}" />
+                    <Label Grid.Row="0"
+                           Grid.Column="2"
+                           Content="{Binding LeftMotorSpeed, FallbackValue=0}" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Content="Right" />
+                    <Slider Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="4"
+                            Minimum="-100"
+                            Maximum="100"
+                            Value="{Binding RightMotorSpeed}" />
+                    <Label Grid.Row="1"
+                           Grid.Column="2"
+                           Content="{Binding RightMotorSpeed, FallbackValue=0}" />
+                    <Button Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Set motor speeds"
+                            Command="{Binding GetVersionCommand}" />
+                </Grid>
+            </Border>
+
+            <Border BorderThickness="0,0,0,1"
+                    BorderBrush="DarkGray">
+                <StackPanel Orientation="Vertical">
+                    <Button Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Get version"
+                            Command="{Binding GetVersionCommand}" />
+
+                    <Button Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Get error"
+                            Command="{Binding GetErrorCommand}" />
+
+                    <Button Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Reset"
+                            Command="{Binding ResetCommand}" />
+                </StackPanel>
+            </Border>
+            <Border>
+                <Grid Margin="4" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"
+                           Content="Sensor readings"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold" />
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Content="Left dist." />
+                    <Label Grid.Row="1"
+                           Grid.Column="1"
+                           Content="{Binding LeftSensorReading, FallbackValue=-}" />
+                    
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Content="Front dist." />
+                    <Label Grid.Row="2"
+                           Grid.Column="1"
+                           Content="{Binding FrontSensorReading, FallbackValue=-}" />
+
+                    <Label Grid.Row="3"
+                           Grid.Column="0"
+                           Content="Right dist." />
+                    <Label Grid.Row="3"
+                           Grid.Column="1"
+                           Content="{Binding RightSensorReading, FallbackValue=-}" />
+                
+                    <Label Grid.Row="4"
+                           Grid.Column="0"
+                           Content="Light." />
+                    <Label Grid.Row="4"
+                           Grid.Column="1"
+                           Content="{Binding LightSensorReading, FallbackValue=-}" />
+
+                    <Label Grid.Row="5"
+                           Grid.Column="0"
+                           Content="Left line" />
+                    <Label Grid.Row="5"
+                           Grid.Column="1"
+                           Content="{Binding LeftLineSensorReading, FallbackValue=-}" />
+
+                    <Label Grid.Row="6"
+                           Grid.Column="0"
+                           Content="Right line" />
+                    <Label Grid.Row="6"
+                           Grid.Column="1"
+                           Content="{Binding RightLineSensorReading, FallbackValue=-}" />
+
+                </Grid>
+            </Border>
+        </StackPanel>
     </Grid>
 </UserControl>
