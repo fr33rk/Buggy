@@ -25,7 +25,7 @@ namespace PL.BuggySoft.Infrastructure.Services
 
 	public class MessageSendEventArgs : MessageReceivedEventArgs<BaseBuggyMessageWrapper>
 	{
-		public MessageSendEventArgs(BaseBuggyMessageWrapper message) 
+		public MessageSendEventArgs(BaseBuggyMessageWrapper message)
 			: base(message)
 		{
 		}
@@ -41,6 +41,9 @@ namespace PL.BuggySoft.Infrastructure.Services
 		/// <summary>Request the buggy to send its firmware version. Answer will be supplied via VersionMessageReceived event.
 		/// </summary>
 		void RequestVersion();
+
+		/// <summary>Gets a value indicating whether there is a connection with the buggy.</summary>
+		bool IsConnected { get; }
 
 		/// <summary>Occurs when [connected].
 		/// </summary>

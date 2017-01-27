@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Mime;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using PL.BuggySoft.Infrastructure.Models.Messages;
 using PL.BuggySoft.Infrastructure.Services;
@@ -19,7 +21,7 @@ namespace BuggySoft.TestTool.ViewModels
 			mSettings = settingsService;
 			mComService = buggyCommunicationService;
 			mComService.MessageReceived += ComServiceOnMessageReceived;
-			mComService.MessageSend += ComServiceOnMessageSend;	
+			mComService.MessageSend += ComServiceOnMessageSend;
 		}
 
 		public ObservableCollection<MessageVm> Messages { get; } = new ObservableCollection<MessageVm>();
@@ -66,7 +68,6 @@ namespace BuggySoft.TestTool.ViewModels
 
 		#endregion Command ConnectCommand
 
-
 		#region Command GetVersionCommand
 
 		/// <summary>Field for the GetVersion command.
@@ -77,11 +78,11 @@ namespace BuggySoft.TestTool.ViewModels
 		/// </summary>
 		[System.ComponentModel.Browsable(false)]
 		public DelegateCommand GetVersionCommand => mGetVersionCommand
-		                                            // Reflection is used to call ChangeCanExecute on the command. Therefore, when the command
-		                                            // is not yet bound to the View, the command is instantiated in a different thread than the
-		                                            // main thread. Prevent this by checking on the SynchronizationContext.
-		                                            ?? (mGetVersionCommand = System.Threading.SynchronizationContext.Current == null
-			                                            ? null : new DelegateCommand(GetVersion, CanGetVersion));
+													// Reflection is used to call ChangeCanExecute on the command. Therefore, when the command
+													// is not yet bound to the View, the command is instantiated in a different thread than the
+													// main thread. Prevent this by checking on the SynchronizationContext.
+													?? (mGetVersionCommand = System.Threading.SynchronizationContext.Current == null
+														? null : new DelegateCommand(GetVersion, CanGetVersion));
 
 		/// <summary>
 		/// </summary>
@@ -94,13 +95,13 @@ namespace BuggySoft.TestTool.ViewModels
 		/// </summary>
 		private bool CanGetVersion()
 		{
-			return true;
+			return mComService.IsConnected;
 		}
 
-		#endregion Command GetVersionCommand				
-
+		#endregion Command GetVersionCommand
 
 		public void OnNavigatedTo(NavigationContext navigationContext)
+
 		{
 			//throw new NotImplementedException();
 		}
@@ -114,8 +115,6 @@ namespace BuggySoft.TestTool.ViewModels
 		{
 			//throw new NotImplementedException();
 		}
-
-		
 
 		public string IpAddress
 		{
@@ -141,5 +140,11 @@ namespace BuggySoft.TestTool.ViewModels
 				NotifyPropertyChanged();
 			}
 		}
+
+		public IList<string> AvailabelAnalogSensors => Enum.GetNames(typeof(AnalogSensor)).ToList();
+
+		public AnalogSensor SelectedSensor { get; set; }
+
+		public bool SendReadingsContinues { get; set; }
 	}
 }

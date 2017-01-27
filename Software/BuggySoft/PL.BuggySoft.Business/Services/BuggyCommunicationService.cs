@@ -45,12 +45,14 @@ namespace PL.BuggySoft.Business.Services
 		{
 			mComLogFile?.Info("Disconnected.");
 			Disconnected?.Invoke(this, EventArgs.Empty);
+			IsConnected = false;
 		}
 
 		private void SenderOnOnConnect(object sender, EventArgs eventArgs)
 		{
 			mComLogFile?.Info("Connected.");
 			Connected?.Invoke(this, EventArgs.Empty);
+			IsConnected = true;
 		}
 
 		private void SenderOnOnDataReceived(object sender, SocketDataReceivedEventArgs socketDataReceivedEventArgs)
@@ -122,6 +124,8 @@ namespace PL.BuggySoft.Business.Services
 		}
 
 		#endregion Commands
+
+		public bool IsConnected { get; private set; }
 
 		public event EventHandler Connected;
 
