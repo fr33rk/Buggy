@@ -46,5 +46,23 @@ namespace PL.BuggySoft.Business.Tests
 			// Assert.
 			mockLogFile.Received(1).Info(expectedLogLine);
 		}
+
+		[Test]
+		public void ComService_RequestVersion_SendsBuggyMessage()
+		{
+			// Arrange
+			var mockClient = Substitute.For<ISender>();
+			var stubLogFile = Substitute.For<ILogFile>();
+			var unitUnderTest = new TestableBuggyCommunicationService(mockClient, stubLogFile);
+			var expectedMessage = "050100000000000000000000000000\r\n";
+			unitUnderTest.Connect("127.0.0.1", 6000);
+
+			// Act
+			unitUnderTest.RequestVersion();
+
+			// Assert
+			mockClient.Received(1).WriteAsync(Arg.Is<string>(s => s == expectedMessage));
+
+		}
 	}
 }

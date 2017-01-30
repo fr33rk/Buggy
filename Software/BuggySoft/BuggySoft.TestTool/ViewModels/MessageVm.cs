@@ -1,36 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PL.BuggySoft.Infrastructure.Models;
 using PL.BuggySoft.Infrastructure.Models.Messages;
 
 namespace BuggySoft.TestTool.ViewModels
 {
-    public class MessageVm
-    {
-	    private readonly BaseBuggyMessageWrapper mWrappedMessage;
-	    private readonly bool mWasReceieved;
+	/// <summary>View model wrapper around a buggy message.
+	/// </summary>
+	public class MessageVm
+	{
+		#region Definitions
 
-	    public MessageVm(bool wasReceieved, BaseBuggyMessageWrapper wrappedMessage)
-	    {
-		    mWrappedMessage = wrappedMessage;
-		    mWasReceieved = wasReceieved;
-	    }
+		private readonly BaseBuggyMessageWrapper mWrappedMessage;
+		private readonly bool mWasReceived;
 
-	    public string Direction => mWasReceieved ? "<" : ":";
+		#endregion Definitions
 
-	    public BuggyCommand Command => mWrappedMessage.Command;
+		#region Constructor(s)
 
-	    public string Rtr => mWrappedMessage.IsRtr ? "Yes" : "No";
+		/// <summary>Initializes a new instance of the <see cref="MessageVm"/> class.
+		/// </summary>
+		/// <param name="wasReceived">if set to <c>true</c> [was receieved].</param>
+		/// <param name="wrappedMessage">The wrapped message.</param>
+		public MessageVm(bool wasReceived, BaseBuggyMessageWrapper wrappedMessage)
+		{
+			mWrappedMessage = wrappedMessage;
+			mWasReceived = wasReceived;
+		}
 
-	    public int TaskId => mWrappedMessage.TaskId;
+		#endregion Constructor(s)
 
-	    public string Error => mWrappedMessage.IsError ? "Yes" : "No";
+		#region Properties
 
-	    public int DataSize => mWrappedMessage.DataSize;
+		/// <summary>Gets the direction indicator.
+		/// </summary>
+		public string Direction => mWasReceived ? "<" : ">";
 
-	    public string Data => mWrappedMessage.ToString();
-    }
+		/// <summary>Gets the command.
+		/// </summary>
+		public BuggyCommand Command => mWrappedMessage.Command;
+
+		/// <summary>Yes, when RTR, false otherwise.
+		/// </summary>
+		public string Rtr => mWrappedMessage.IsRtr ? "Yes" : "No";
+
+		/// <summary>Gets the task identifier.
+		/// </summary>
+		public int TaskId => mWrappedMessage.TaskId;
+
+		/// <summary>Yes. when in error, false otherwise.
+		/// </summary>
+		public string Error => mWrappedMessage.IsError ? "Yes" : "No";
+
+		/// <summary>Gets the size of the data.
+		/// </summary>
+		public int DataSize => mWrappedMessage.DataSize;
+
+		/// <summary>Gets the data.
+		/// </summary>
+		public string Data
+		{
+			get
+			{
+				var hexData = Array.ConvertAll(mWrappedMessage.Data.Take(DataSize).ToArray(), input => input.ToString("X2")).ToArray();
+				return string.Join(" ", hexData);
+			}
+		}
+
+		/// <summary>Gets the human readable data segment.
+		/// </summary>
+		public string DataInterpretation => mWrappedMessage.SpecificDataString();
+
+		#endregion Properties
+	}
 }

@@ -43,7 +43,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		/// <returns></returns>
 		public override string SpecificDataString()
 		{
-			return $", Reset reason(s): {Reason}";
+			return $"Reset reason(s): {Reason}";
 		}
 	}
 }

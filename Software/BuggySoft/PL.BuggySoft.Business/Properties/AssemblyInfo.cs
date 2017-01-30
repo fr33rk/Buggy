@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PL.BuggySoft.Business")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Buisiness library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("PanteraLeo")]
 [assembly: AssemblyProduct("PL.BuggySoft.Business")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

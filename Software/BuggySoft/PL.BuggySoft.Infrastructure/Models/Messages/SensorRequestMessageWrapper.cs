@@ -5,7 +5,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 	/// <summary>Wrapper around the sensor request message.
 	///
 	/// </summary>
-	public partial class SensorRequestMessageWrapper : BaseBuggyMessageWrapper
+	public class SensorRequestMessageWrapper : BaseBuggyMessageWrapper
 	{
 		/// <summary>Initializes a new instance of the <see cref="SensorRequestMessageWrapper"/> class.
 		/// </summary>

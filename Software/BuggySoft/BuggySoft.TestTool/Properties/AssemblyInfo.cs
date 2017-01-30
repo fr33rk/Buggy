@@ -6,9 +6,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BuggySoft.TestTool")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Testtool for communication with an control of the buggy")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("PanteraLeo")]
 [assembly: AssemblyProduct("BuggySoft.TestTool")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

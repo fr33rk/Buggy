@@ -8,15 +8,23 @@ using Prism.Modularity;
 
 namespace PL.BuggySoft.Business
 {
+	/// <summary>Module initialization.
+	/// </summary>
+	/// <seealso cref="Prism.Modularity.IModule" />
 	public class ModuleInit : IModule
 	{
 		private readonly IUnityContainer mContainer;
 
+		/// <summary>Initializes a new instance of the <see cref="ModuleInit"/> class.
+		/// </summary>
+		/// <param name="container">The container.</param>
 		public ModuleInit(IUnityContainer container)
 		{
 			mContainer = container;
 		}
 
+		/// <summary>Notifies the module that it has be initialized.
+		/// </summary>
 		public void Initialize()
 		{
 			mContainer.RegisterType<ILogFile, LogFile>("GeneralLog", new ContainerControlledLifetimeManager(),

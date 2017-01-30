@@ -24,7 +24,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		/// <returns></returns>
 		public override string SpecificDataString()
 		{
-			return $", Version: {Version}";
+			return $"Version: {Version}";
 		}
 	}
 }

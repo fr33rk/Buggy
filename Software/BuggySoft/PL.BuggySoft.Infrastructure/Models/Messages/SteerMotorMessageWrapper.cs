@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PL.BuggySoft.Infrastructure.Models.Messages
+﻿namespace PL.BuggySoft.Infrastructure.Models.Messages
 {
-	/// <summary>Message wrapper for the message that commands the 
-	/// 
+	/// <summary>Message wrapper for the message that commands the
+	///
 	/// </summary>
 	public class SteerMotorMessageWrapper : BaseBuggyMessageWrapper
 	{
@@ -28,7 +22,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		/// <returns></returns>
 		public override string SpecificDataString()
 		{
-			return $", Left: {(sbyte)Data[0]}, Right: {(sbyte)Data[1]}";
+			return $"Left: {(sbyte)Data[0]}, Right: {(sbyte)Data[1]}";
 		}
 	}
 }

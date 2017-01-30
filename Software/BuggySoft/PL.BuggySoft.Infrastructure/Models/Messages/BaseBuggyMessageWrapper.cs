@@ -101,7 +101,15 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		public override string ToString()
 		{
 			var hexData = Array.ConvertAll(Data.Take(DataSize).ToArray(), input => input.ToString("X2")).ToArray();
-			return $"Task ID: {TaskId}, Command: {Command}, RTR: {IsRtr}, Error: {IsError}, Size: {DataSize}, Data: [{string.Join(",", hexData)}]{SpecificDataString()}";
+			var retValue = $"Task ID: {TaskId}, Command: {Command}, RTR: {IsRtr}, Error: {IsError}, Size: {DataSize}, Data: [{string.Join(",", hexData)}]";
+
+			var specficString = SpecificDataString();
+			if (specficString.Length > 0)
+			{
+				retValue += $", {specficString}";
+			}
+
+			return retValue;
 		}
 
 		/// <summary>Specific string for the data.</summary>
