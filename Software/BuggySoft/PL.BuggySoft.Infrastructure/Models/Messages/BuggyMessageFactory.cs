@@ -19,7 +19,11 @@
 				case BuggyCommand.ResetDone:
 					return new ResetDoneMessageWrapper(rawMessage);
 				case BuggyCommand.SensorResult:
-					return new SensorResultMessageWrapper(rawMessage);
+					if (baseMessage.DataSize == 3)
+					{
+						return new SensorResultMessageWrapper(rawMessage);
+					}
+					return new SensorResultAllMessageWrapper(rawMessage);
 				case BuggyCommand.SteerMotorDone:
 				default:
 					return baseMessage;

@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="ViewModels\MainVm.cs" />
     <Compile Include="ViewModels\MessageVm.cs" />
+    <Compile Include="ViewModels\SensorReadingsVM.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>

@@ -6,7 +6,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 	/// <summary>Basic wrapper around the messages used to communicate with the buggy.
 	/// Layout:
 	/// 0123456789012345678901234567890123456789012345678901234567890123...
-	/// [Command]|[     Task ID      ][n/u  ]+++[         Data          ..]
+	/// [Command]|[     Task ID      ][n/u ]+-++[         Data          ..]
 	///        [RTR]                         | [IsError]
 	///                                    [Data size]
 	/// </summary>
@@ -91,7 +91,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 			// Task ID is 16 bits and is swapped by firmware.
 			TaskId = (ushort)((raw[2] << 8) | (raw[1]));
 			IsError = (raw[3] & 0x01) == 0x01;
-			DataSize = (byte)((raw[3] >> 1) & 0x03);
+			DataSize = (byte)((raw[3] >> 1) & 0x0F);
 			Data = raw.Skip(4).Take(11).ToArray();
 		}
 

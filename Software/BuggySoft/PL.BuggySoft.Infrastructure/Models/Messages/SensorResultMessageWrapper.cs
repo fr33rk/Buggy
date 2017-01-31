@@ -22,47 +22,25 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 
 		#endregion Constructor(s)
 
+		/// <summary>The sensor that has been read.</summary>
+		/// <value>The sensor.</value>
+		public AnalogSensor Sensor { get; private set; }
+
 		/// <summary>Gets the single result, filled in case only one sensor was requested.</summary>
 		/// <value>The single result.</value>
-		public ushort SingleResult { get; private set; }
-
-		/// <summary>Gets the value of the right distance sensor.</summary>
-		public ushort DistanceRight { get; private set; }
-
-		/// <summary>Gets the value of the frontal distance sensor.</summary>
-		public ushort DistanceFront { get; private set; }
-
-		/// <summary>Gets the value of the left distance sensor.</summary>
-		public ushort DistanceLeft { get; private set; }
-
-		/// <summary>Gets the value of the left line sensor.</summary>
-		public bool LineSensorRight { get; private set; }
-
-		/// <summary>Gets the value of the right line sensor.</summary>
-		public bool LineSensorLeft { get; private set; }
-
-		/// <summary>Gets the value of the microphone.</summary>
-		public ushort Microphone { get; private set; }
-
-		/// <summary>Gets the value of the light sensor.</summary>
-		public ushort Light { get; private set; }
+		public ushort Result { get; private set; }
 
 		private void ConvertData()
 		{
-			if (DataSize == 2)
-			{
-				SingleResult = BitConverter.ToUInt16(Data, 0);
-			}
-			else
-			{
-				DistanceLeft = BitConverter.ToUInt16(Data, 0);
-				DistanceFront = BitConverter.ToUInt16(Data, 2);
-				DistanceRight = BitConverter.ToUInt16(Data, 4);
-				Light = BitConverter.ToUInt16(Data, 6);
-				Microphone = BitConverter.ToUInt16(Data, 8);
-				LineSensorLeft = (Data[10] & 0x01) == 0x01;
-				LineSensorRight = (Data[10] & 0x02) == 0x02;
-			}
+			Sensor = (AnalogSensor)Data[0];
+			Result = BitConverter.ToUInt16(Data, 1);
+		}
+
+		/// <summary>Specific string for the data.</summary>
+		/// <returns></returns>
+		public override string SpecificDataString()
+		{
+			return $"Sensor:{Sensor} Result:{Result}";
 		}
 	}
 }
