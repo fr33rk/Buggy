@@ -130,7 +130,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ListBox Height="200"
+                        <ListBox Height="140"
                                  Margin="4"
                                  ItemsSource="{Binding AvailableAnalogSensors}"
                                  SelectedItem="{Binding SelectedSensor}">
@@ -231,6 +231,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0"
                            Grid.Column="0"
@@ -243,42 +244,48 @@
                            Content="Left dist." />
                     <Label Grid.Row="1"
                            Grid.Column="1"
-                           Content="{Binding LeftSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.DistanceLeft, TargetNullValue=-}" />
 
                     <Label Grid.Row="2"
                            Grid.Column="0"
                            Content="Front dist." />
                     <Label Grid.Row="2"
                            Grid.Column="1"
-                           Content="{Binding FrontSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.DistanceFront, TargetNullValue=-}" />
 
                     <Label Grid.Row="3"
                            Grid.Column="0"
                            Content="Right dist." />
                     <Label Grid.Row="3"
                            Grid.Column="1"
-                           Content="{Binding RightSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.DistanceRight, TargetNullValue=-}" />
 
                     <Label Grid.Row="4"
                            Grid.Column="0"
                            Content="Light." />
                     <Label Grid.Row="4"
                            Grid.Column="1"
-                           Content="{Binding LightSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.Light, TargetNullValue=-}" />
 
                     <Label Grid.Row="5"
                            Grid.Column="0"
                            Content="Left line" />
                     <Label Grid.Row="5"
                            Grid.Column="1"
-                           Content="{Binding LeftLineSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.LineLeft, TargetNullValue=-}" />
 
                     <Label Grid.Row="6"
                            Grid.Column="0"
                            Content="Right line" />
                     <Label Grid.Row="6"
                            Grid.Column="1"
-                           Content="{Binding RightLineSensorReading, FallbackValue=-}" />
+                           Content="{Binding Sensors.LineRight, TargetNullValue=-}" />
+                    <Button Grid.Row="7"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Style="{StaticResource PlDefaultButtonStyle}"
+                            Content="Clear"
+                            Command="{Binding ClearCommand}"/>
                 </Grid>
             </Border>
         </Grid>

@@ -38,6 +38,8 @@ namespace BuggySoft.TestTool.ViewModels
 			mComService.MessageSend += ComServiceOnMessageSend;
 			mComService.Connected += ComServiceOnConnected;
 			mComService.Disconnected += ComServiceOnDisconnected;
+
+			
 		}
 
 		#endregion Constructor(s)
@@ -244,6 +246,8 @@ namespace BuggySoft.TestTool.ViewModels
 		}
 
 		#endregion Property IsConnecting
+
+		public SensorReadingsVM Sensors { get; } = new SensorReadingsVM();
 
 		#region Command ConnectCommand
 
@@ -469,5 +473,39 @@ namespace BuggySoft.TestTool.ViewModels
 		}
 
 		#endregion Command GetErrorCommand
+
+		#region Command Clear
+
+		/// <summary>Field for the GetError command.
+		/// </summary>
+		private DelegateCommand mClearCommand;
+
+		/// <summary>Gets GetError command.
+		/// </summary>
+		[System.ComponentModel.Browsable(false)]
+		public DelegateCommand ClearCommand => mClearCommand
+												  // Reflection is used to call ChangeCanExecute on the command. Therefore, when the command
+												  // is not yet bound to the View, the command is instantiated in a different thread than the
+												  // main thread. Prevent this by checking on the SynchronizationContext.
+												  ?? (mGetErrorCommand = System.Threading.SynchronizationContext.Current == null
+													  ? null : new DelegateCommand(Clear, CanClear));
+
+		/// <summary>Get the errors the buggy encountered.
+		/// </summary>
+		private void Clear()
+		{
+			Messages.Clear();
+			Sensors.Clear();
+		}
+
+		/// <summary>Determines whether the StartMeasurement command can be executed.
+		/// </summary>
+		private bool CanClear()
+		{
+			return true;
+		}
+
+		#endregion Command GetErrorCommand
+
 	}
 }
