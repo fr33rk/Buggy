@@ -52,6 +52,7 @@
     <Compile Include="Models\Messages\BuggyMessageFactory.cs" />
     <Compile Include="Models\Messages\ErrorRequestMessageWrapper.cs" />
     <Compile Include="Models\Messages\SensorResultAllMessageWrapper.cs" />
+    <Compile Include="Models\Messages\SteerMotorDoneMessageWrapper.cs" />
     <Compile Include="Models\Messages\SteerMotorMessageWrapper.cs" />
     <Compile Include="Models\Messages\ResetDoneMessageWrapper.cs" />
     <Compile Include="Models\Messages\ResetMessageWrapper.cs" />

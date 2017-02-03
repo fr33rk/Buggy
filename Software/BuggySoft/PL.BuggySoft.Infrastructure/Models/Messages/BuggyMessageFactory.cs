@@ -25,6 +25,7 @@
 					}
 					return new SensorResultAllMessageWrapper(rawMessage);
 				case BuggyCommand.SteerMotorDone:
+					return new SteerMotorDoneMessageWrapper(rawMessage);
 				default:
 					return baseMessage;
 			}

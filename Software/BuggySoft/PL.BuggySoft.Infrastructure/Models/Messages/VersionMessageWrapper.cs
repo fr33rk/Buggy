@@ -7,14 +7,27 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 	/// </summary>
 	public class VersionMessageWrapper : BaseBuggyMessageWrapper
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="VersionMessageWrapper"/> class.
+		/// <summary>Initializes a new instance of the <see cref="VersionMessageWrapper"/> class.
 		/// </summary>
 		/// <param name="rawMessage">The raw message.</param>
 		[ExcludeFromCodeCoverage]
 		public VersionMessageWrapper(byte[] rawMessage)
 			: base(rawMessage)
 		{
+		}
+
+		/// <summary>Initializes a new instance of the <see cref="VersionMessageWrapper"/> class.
+		/// </summary>
+		/// <param name="taskId">The task identifier.</param>
+		/// <param name="major">The major version number.</param>
+		/// <param name="minor">The minor version number.</param>
+		/// <param name="build">The build version number.</param>
+		public VersionMessageWrapper(ushort taskId, byte major, byte minor, byte build)
+			: base(BuggyCommand.Version, false, taskId, 3)
+		{
+			Data[0] = major;
+			Data[1] = minor;
+			Data[2] = build;
 		}
 
 		/// <summary>Gets the version.</summary>

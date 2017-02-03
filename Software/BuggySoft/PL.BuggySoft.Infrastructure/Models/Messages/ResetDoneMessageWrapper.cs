@@ -34,6 +34,12 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 		{
 		}
 
+		public ResetDoneMessageWrapper(ushort taskId, BuggyResetReason reason)
+			: base(BuggyCommand.ResetDone, false, taskId, 1)
+		{
+			Data[0] = (byte)reason;
+		}
+
 		#endregion Constructor(s)
 
 		/// <summary>Gets the reason(s) why the buggy reset.</summary>
