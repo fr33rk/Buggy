@@ -27,8 +27,8 @@ typedef union
         
         // Word 3
         uint8_t Error : 1;
-        uint8_t DataSize : 2;    // No of bytes used in the Data array.
-        uint8_t Unused : 5;      // Unused
+        uint8_t DataSize : 4;    // No of bytes used in the Data array.
+        uint8_t Unused : 3;      // Unused
 
         // Word 4..14
         uint8_t Data[11];        // Data
@@ -39,6 +39,7 @@ typedef union
 void CreateVersionMessage(BuggyMessage *pmessage, uint16_t taskId);
 void CreateResetDoneMessage(BuggyMessage *pMessage);
 void CreateSensorResultMessage(BuggyMessage *pMessage, AnalogSensor sensor, uint16_t value, uint16_t taskId);
+void CreateAllSensorResultMessage(BuggyMessage *pMessage, uint16_t taskId);
 void CreateSendErrorMessage(BuggyMessage *pMessage);
 
 void ReceiveMessage(const uint8_t *message);

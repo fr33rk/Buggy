@@ -91,6 +91,7 @@ bool OperationalStateMachine(void)
             mCurrentState = SendingMessage;
             return true;
         case SendingMessage:
+           
             if (IsTimerExpired(0))
             {      
                 /*
@@ -124,10 +125,18 @@ bool OperationalStateMachine(void)
 #else
                 if (BuggyMemory.SendSensorUpdates)
                 {
-                    CreateSensorResultMessage(&message, 
-                            BuggyMemory.SensorSelected, 
-                            GetLastReading(BuggyMemory.SensorSelected),
-                            BuggyMemory.SendSensorUpdatesTaskId);
+                    if (BuggyMemory.SensorSelected == AllSensors)
+                    {
+                        CreateAllSensorResultMessage(&message,
+                                BuggyMemory.SendSensorUpdatesTaskId);
+                    }
+                    else
+                    {
+                        CreateSensorResultMessage(&message, 
+                                BuggyMemory.SensorSelected, 
+                                GetLastReading(BuggyMemory.SensorSelected),
+                                BuggyMemory.SendSensorUpdatesTaskId);
+                    }
                     SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);                
                 }
 #endif
@@ -202,20 +211,27 @@ void ProcessSensorRequest()
         && (BuggyMemory.pLastMessage->DataSize == 2))
     {
         BuggyMemory.SensorSelected = BuggyMemory.pLastMessage->Data[0];
-        
         BuggyMemory.SendSensorUpdates = BuggyMemory.pLastMessage->Data[1];
         
-        if (BuggyMemory.pLastMessage->Data[1])
+        if (BuggyMemory.SendSensorUpdates)
         {
             BuggyMemory.SendSensorUpdatesTaskId = BuggyMemory.pLastMessage->TaskId;
         }   
         else
         {
             BuggyMessage message;
-            CreateSensorResultMessage(&message, 
-                    BuggyMemory.SensorSelected, 
-                    GetLastReading(BuggyMemory.SensorSelected),
-                    BuggyMemory.pLastMessage->TaskId);
+            if (BuggyMemory.SensorSelected == AllSensors)
+            {
+                CreateAllSensorResultMessage(&message,
+                        BuggyMemory.SendSensorUpdatesTaskId);
+            }
+            else
+            {
+                CreateSensorResultMessage(&message, 
+                        BuggyMemory.SensorSelected, 
+                        GetLastReading(BuggyMemory.SensorSelected),
+                        BuggyMemory.SendSensorUpdatesTaskId);
+            }
             SendBuffer(message.AsBuffer, BUGGY_MESSAGE_SIZE);
         }
     }    

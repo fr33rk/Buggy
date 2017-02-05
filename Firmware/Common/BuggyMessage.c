@@ -4,6 +4,7 @@
 #include "BuggyMemory.h"
 #include "BuggyMessage.h"
 #include "MessageFIFOBuffer.h"
+#include "LEDs.h"
 
 /**
  * Store a received message in memory for later processing.
@@ -34,7 +35,7 @@ void CreateVersionMessage(BuggyMessage *pMessage, uint16_t taskId)
     
     pMessage->Data[0] = 0;//MAJOR;
     pMessage->Data[1] = 1;//MINOR;
-    pMessage->Data[2] = 0;//BUILD;
+    pMessage->Data[2] = 4;//BUILD;
 }
 
 /**
@@ -62,38 +63,39 @@ void CreateSensorResultMessage(BuggyMessage *pMessage, AnalogSensor sensor, uint
     pMessage->DataSize = 3;
 
     pMessage->Data[0] = sensor;
-    pMessage->Data[1] = HIGH_BYTE(value);
-    pMessage->Data[2] = LOW_BYTE(value);
+    pMessage->Data[1] = LOW_BYTE(value);
+    pMessage->Data[2] = HIGH_BYTE(value);
 }
 
-void CreateAllSensorResultMessage(BuggyMessage *pMessage)
+void CreateAllSensorResultMessage(BuggyMessage *pMessage, uint16_t taskId)
 {
     uint16_t sensorVal;
     
-    pMessage->Command = cmdSensorResult;
+    InitMessage(pMessage, cmdSensorResult, taskId);
+    pMessage->DataSize = 11;    
     
     sensorVal = GetLastReading(DistanceLeft);
-    pMessage->Data[0] = HIGH_BYTE(sensorVal);
-    pMessage->Data[1] = LOW_BYTE(sensorVal);
+    pMessage->Data[0] = LOW_BYTE(sensorVal);
+    pMessage->Data[1] = HIGH_BYTE(sensorVal);
 
     sensorVal = GetLastReading(DistanceFront);
-    pMessage->Data[2] = HIGH_BYTE(sensorVal);
-    pMessage->Data[3] = LOW_BYTE(sensorVal);
+    pMessage->Data[2] = LOW_BYTE(sensorVal);
+    pMessage->Data[3] = HIGH_BYTE(sensorVal);
 
     sensorVal = GetLastReading(DistanceRight);
-    pMessage->Data[4] = HIGH_BYTE(sensorVal);
-    pMessage->Data[5] = LOW_BYTE(sensorVal);
+    pMessage->Data[4] = LOW_BYTE(sensorVal);
+    pMessage->Data[5] = HIGH_BYTE(sensorVal);
 
     sensorVal = GetLastReading(Light);
-    pMessage->Data[6] = HIGH_BYTE(sensorVal);
-    pMessage->Data[7] = LOW_BYTE(sensorVal);
+    pMessage->Data[6] = LOW_BYTE(sensorVal);
+    pMessage->Data[7] = HIGH_BYTE(sensorVal);
 
     sensorVal = GetLastReading(Microphone);
-    pMessage->Data[8] = HIGH_BYTE(sensorVal);
-    pMessage->Data[9] = LOW_BYTE(sensorVal);
+    pMessage->Data[8] = LOW_BYTE(sensorVal);
+    pMessage->Data[9] = HIGH_BYTE(sensorVal);
     
     // Line sensors
-    pMessage->Data[10] = PORTBbits.RB0 & PORTBbits.RB1; 
+    pMessage->Data[10] = (uint8_t)(PORTBbits.RB0 ? 2 : 0) | (PORTBbits.RB1 ? 1 : 0); 
 }
 
 void CreateSteerMotorDoneMessage(BuggyMessage *pMessage)

@@ -17,7 +17,7 @@ typedef enum ANALOG_SENSOR
     DistanceRight,
     Microphone,
     Light,
-    All = 0xFF
+    AllSensors = 0xFF
 } AnalogSensor;
 
 void InitAnalogSensors();
