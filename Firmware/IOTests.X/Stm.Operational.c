@@ -49,7 +49,7 @@ bool OperationalStateMachine(void)
     {
         Button1Clicked = false;
         isShowingIp ? ClearByteValueInLed() : SetByteValueInLed(GetIpAddress());
-        isShowingIp = !isShowingIp;
+        isShowingIp = !isShowingIp;        
     }
     
     MessageFIFOElement element;
@@ -186,6 +186,9 @@ void static ProcessCommand()
             break;
         case cmdSensorReq:
             ProcessSensorRequest();
+            break;
+        case cmdReset:
+            Reset();
             break;
     }
     

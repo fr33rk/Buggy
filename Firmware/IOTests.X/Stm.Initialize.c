@@ -102,7 +102,7 @@ bool InitializeBuggy()
     
     // Save the reason why the buggy has been reset. This is found
     // in either the last 2 bits of STKPTR or first 5 bits of RCON.
-    BuggyMemory.ResetReason = (STKPTR & 0xC0) | (RCON & 0x1F);
+    BuggyMemory.ResetReason = (STKPTR & 0xC0) | (~RCON & 0x1F);
     
     InitializeLeds();
     InitCounters();

@@ -35,7 +35,7 @@ void CreateVersionMessage(BuggyMessage *pMessage, uint16_t taskId)
     
     pMessage->Data[0] = 0;//MAJOR;
     pMessage->Data[1] = 1;//MINOR;
-    pMessage->Data[2] = 4;//BUILD;
+    pMessage->Data[2] = 5;//BUILD;
 }
 
 /**
