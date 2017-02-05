@@ -61,6 +61,7 @@ void main(void)
 {
     mMainState = Start;
 
+        
     while (true)
     {
         if (mMainState >= Operational)

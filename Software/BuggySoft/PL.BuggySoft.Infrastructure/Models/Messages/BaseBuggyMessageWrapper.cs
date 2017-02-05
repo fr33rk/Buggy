@@ -6,7 +6,7 @@ namespace PL.BuggySoft.Infrastructure.Models.Messages
 	/// <summary>Basic wrapper around the messages used to communicate with the buggy.
 	/// Layout:
 	/// 0123456789012345678901234567890123456789012345678901234567890123...
-	/// [Command]|[     Task ID      ][n/u ]+-++[         Data          ..]
+	/// [Command]|[     Task ID      ][n/u]+--++[         Data          ..]
 	///        [RTR]                         | [IsError]
 	///                                    [Data size]
 	/// </summary>

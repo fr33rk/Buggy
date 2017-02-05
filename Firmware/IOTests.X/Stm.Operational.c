@@ -15,6 +15,7 @@
 
 // Add global variables here.
 extern bool Button1Clicked;
+extern bool Button2Clicked;
 extern MessageFIFOBuffer UartInMessageBuffer;
 
 // Add local variables here.
@@ -45,11 +46,34 @@ bool OperationalStateMachine(void)
     static bool isShowingIp = false;
     BuggyMessage message;
     
+    if (Button2Clicked)
+    {
+        Button2Clicked = false;
+        isShowingIp ? ClearByteValueInLed() : SetByteValueInLed(GetIpAddress());
+        isShowingIp = !isShowingIp;        
+    }
+    
     if (Button1Clicked)
     {
         Button1Clicked = false;
-        isShowingIp ? ClearByteValueInLed() : SetByteValueInLed(GetIpAddress());
-        isShowingIp = !isShowingIp;        
+        
+        SetLedState(5, ContinuesOn);
+     
+        // Configure timer 2 (used for PWM)
+        T2CON = 0x04;  // Enable timer 2, 1:1 Postscle, Prescale 1
+        PR2 = 255;
+        
+        // Left motor
+        TRISEbits.RE0 = 0; // Output
+        TRISCbits.RC1 = 0; // RC1 = PWM output
+        CCP1CON = 0x0C; // Configure CCP module as PWM
+        CCPR1L = 255;
+        
+        // Right motor
+        TRISEbits.RE1 = 0; // Output
+        TRISCbits.RC2 = 0; // RC2 = PWM output
+        CCP2CON = 0x0C; // Configure CCP module as PWM
+        CCPR2L = 255;    
     }
     
     MessageFIFOElement element;

@@ -5,6 +5,18 @@ namespace BuggySoft.TestTool.ViewModels
 {
 	public class SensorReadingsVM : ViewModelBase
 	{
+		public void Update(BaseBuggyMessageWrapper messageWrapper)
+		{
+			if (messageWrapper is SensorResultMessageWrapper)
+			{
+				Update((SensorResultMessageWrapper)messageWrapper);
+			}
+			else if (messageWrapper is SensorResultAllMessageWrapper)
+			{
+				Update((SensorResultAllMessageWrapper)messageWrapper);
+			}
+		}
+
 		public void Update(SensorResultMessageWrapper sensorMessage)
 		{
 			// Test each time to prevent 'blinking'. E.g. when continues measuring the front setting the value first to null and then to
@@ -23,6 +35,10 @@ namespace BuggySoft.TestTool.ViewModels
 			DistanceLeft = sensorMessage.DistanceLeft;
 			DistanceRight = sensorMessage.DistanceRight;
 			DistanceFront = sensorMessage.DistanceFront;
+			Light = sensorMessage.Light;
+			Microphone = sensorMessage.Microphone;
+			LineLeft = sensorMessage.LineSensorLeft;
+			LineRight = sensorMessage.LineSensorRight;
 		}
 
 		public void Clear()

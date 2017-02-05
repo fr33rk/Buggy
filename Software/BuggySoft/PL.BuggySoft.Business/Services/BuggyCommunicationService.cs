@@ -159,6 +159,7 @@ namespace PL.BuggySoft.Business.Services
 		public void Reset()
 		{
 			SendMessage(new ResetMessageWrapper(++mTaskId));
+			mSender.Stop();
 		}
 
 		/// <summary>

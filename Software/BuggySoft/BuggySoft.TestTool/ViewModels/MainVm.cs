@@ -38,8 +38,6 @@ namespace BuggySoft.TestTool.ViewModels
 			mComService.MessageSend += ComServiceOnMessageSend;
 			mComService.Connected += ComServiceOnConnected;
 			mComService.Disconnected += ComServiceOnDisconnected;
-
-			
 		}
 
 		#endregion Constructor(s)
@@ -63,7 +61,7 @@ namespace BuggySoft.TestTool.ViewModels
 		private void ComServiceOnMessageReceived(object sender, MessageReceivedEventArgs<BaseBuggyMessageWrapper> messageReceivedEventArgs)
 		{
 			Application.Current.Dispatcher.Invoke(() => Messages.Insert(0, new MessageVm(true, messageReceivedEventArgs.Message)));
-			//Application.Current.Dispatcher.Invoke(() => Messages.Add(new MessageVm(true, messageReceivedEventArgs.Message)));
+			Sensors.Update(messageReceivedEventArgs.Message);
 		}
 
 		private void ComServiceOnMessageSend(object sender, MessageSendEventArgs messageSendEventArgs)
@@ -505,7 +503,6 @@ namespace BuggySoft.TestTool.ViewModels
 			return true;
 		}
 
-		#endregion Command GetErrorCommand
-
+		#endregion Command Clear
 	}
 }
